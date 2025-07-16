@@ -1,59 +1,77 @@
+import org.gradle.kotlin.dsl.project
+
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
+    id("android-application-convention")
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.compose.compiler)
 }
 
-android {
-    namespace = "br.com.havan.mobile.fusecsgomatches"
-    compileSdk = 36
-
-    defaultConfig {
-        applicationId = "br.com.havan.mobile.fusecsgomatches"
-        minSdk = 26
-        targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
-    buildFeatures {
-        compose = true
-    }
+kotlin {
+    jvmToolchain(JavaVersion.VERSION_21.toString().toInt())
 }
 
 dependencies {
+    //Modules
+    implementation(project(":feature-core"))
+    implementation(project(":feature-main"))
+    implementation(project(":feature-details"))
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+    // Common
+    implementation(libs.ax.core.ktx)
+    implementation(libs.com.google.android.material)
+
+    //Compose
+    implementation(platform(libs.ax.compose.bom))
+    implementation(libs.ax.compose.ui)
+    implementation(libs.ax.compose.ui.graphics)
+    implementation(libs.ax.compose.ui.tooling)
+    implementation(libs.ax.compose.ui.tooling.preview)
+    implementation(libs.ax.compose.ui.viewbinding)
+    implementation(libs.ax.compose.runtime.livedata)
+    implementation(libs.ax.compose.runtime.rxjava3)
+    implementation(libs.ax.compose.material3)
+    implementation(libs.ax.constraintlayout.compose)
+    implementation(libs.ax.compose.material.icons.core)
+    implementation(libs.ax.compose.material.icons.extended)
+    implementation(libs.ax.activity.compose)
+    implementation(libs.ax.lifecycle.viewmodel.compose)
+    implementation(libs.ax.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
+
+    //Compose Navigation 3
+    implementation(libs.ax.navigation3.runtime)
+    implementation(libs.ax.navigation3.ui)
+    implementation(libs.ax.navigation3.viewmodel)
+    //implementation(libs.ax.navigation3.adaptive)
+
+     //OkHttp
+    implementation(platform(libs.com.squareup.okhttp3.bom))
+    implementation(libs.com.squareup.okhttp3)
+    implementation(libs.com.squareup.okhttp3.logging.interceptor)
+
+    //Moshi
+    implementation(libs.com.squareup.moshi.kotlin)
+    ksp(libs.com.squareup.moshi.kotlin.codegen)
+
+    //Retrofit 2
+    implementation(libs.com.squareup.retrofit2.retrofit)
+    implementation(libs.com.squareup.retrofit2.converter.moshi)
+
+    //Lifecycle
+    implementation(libs.ax.lifecycle.runtime.ktx)
+    implementation(libs.ax.lifecycle.common)
+    implementation(libs.ax.lifecycle.common.java8)
+    implementation(libs.ax.lifecycle.viewmodel.savedstate)
+    implementation(libs.ax.lifecycle.viewmodel.ktx)
+    implementation(libs.ax.lifecycle.extensions)
+
+    //Splashscreen
+    implementation(libs.ax.core.splashscreen)
+
+    //Startup
+    implementation(libs.ax.startup.runtime)
+
+    //Other
+    implementation(libs.io.coil.kt.coil.compose)
 }
