@@ -7,6 +7,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import dev.diegoflassa.fusecsgomatches.core.extensions.hiltActivityViewModel
 import kotlinx.coroutines.flow.collectLatest
 import dev.diegoflassa.fusecsgomatches.core.navigation.NavigationViewModel
 
@@ -14,18 +15,18 @@ private const val tag = "DetailsScreen"
 
 @Composable
 fun DetailsScreen(
-    navigationViewModel: NavigationViewModel = NavigationViewModel(),
-    mainViewModel: DetailsViewModel = DetailsViewModel(),
+    navigationViewModel: NavigationViewModel = hiltActivityViewModel(),
+    detailsViewModel: DetailsViewModel = DetailsViewModel(),
 ) {
-    val uiState by mainViewModel.uiState.collectAsState()
+    val uiState by detailsViewModel.uiState.collectAsState()
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        mainViewModel.processIntent(DetailsIntent.Placeholder)
+        detailsViewModel.processIntent(DetailsIntent.Placeholder)
     }
 
-    LaunchedEffect(key1 = mainViewModel.effect) {
-        mainViewModel.effect.collectLatest { effect ->
+    LaunchedEffect(key1 = detailsViewModel.effect) {
+        detailsViewModel.effect.collectLatest { effect ->
             when (effect) {
                 is DetailsEffect.Placeholder -> {
                 }
@@ -36,7 +37,7 @@ fun DetailsScreen(
     DetailsScreenContent(
         navigationViewModel = navigationViewModel,
         uiState = uiState,
-        onIntent = mainViewModel::processIntent
+        onIntent = detailsViewModel::processIntent
     )
 }
 

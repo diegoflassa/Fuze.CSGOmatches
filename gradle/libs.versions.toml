@@ -4,6 +4,9 @@
 gradle = "8.11.1"
 kotlin = "2.2.0"
 
+#Project build.gradle
+hilt-android-gradle-plugin = "2.56.2"
+
 #Common
 core-ktx = "1.16.0"
 material = "1.12.0"
@@ -27,6 +30,13 @@ kotlinx-serialization-json = "1.9.0"
 ax-navigation3-runtime = "1.0.0-alpha05"
 ax-navigation3-ui = "1.0.0-alpha05"
 ax-navigation3-viewmodel = "1.0.0-alpha03"
+
+#Dagger & Hilt
+hilt-android = "2.56.2"
+hilt-android-compiler = "2.56.2"
+hilt-common = "1.2.0"
+hilt-compiler = "1.2.0"
+ax-hilt-navigation-compose = "1.2.0"
 
 #OkHttp
 okhttp-bom = "5.1.0"
@@ -101,6 +111,13 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 ax-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "ax-navigation3-runtime" }
 ax-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "ax-navigation3-ui" }
 
+#Dagger & Hilt
+ax-hilt-common = { module = "androidx.hilt:hilt-common", version.ref = "hilt-common" }
+ax-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hilt-compiler" }
+ax-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "ax-hilt-navigation-compose" }
+com-google-dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt-android" }
+com-google-dagger-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt-android-compiler" }
+
 #ViewModel integration and adaptive layouts
 ax-navigation3-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "ax-navigation3-viewmodel" }
 #ax-navigation3-adaptive = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation3", version.ref = "ax-navigation3-adaptive" }
@@ -143,3 +160,6 @@ kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref =
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 com-google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "com-google-devtools-ksp" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+
+#Project build.gradle
+hilt-android-gradle-plugin = { id = "com.google.dagger.hilt.android", version.ref = "hilt-android-gradle-plugin" }

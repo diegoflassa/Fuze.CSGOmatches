@@ -46,6 +46,13 @@ dependencies {
     implementation(libs.ax.navigation3.runtime)
     implementation(libs.ax.navigation3.ui)
 
+    //Dagger & Hilt
+    implementation(libs.ax.hilt.common)
+    implementation(libs.com.google.dagger.hilt.android)
+    implementation(libs.ax.hilt.navigation.compose)
+    ksp(libs.com.google.dagger.hilt.android.compiler)
+    ksp(libs.ax.hilt.compiler)
+
     //OkHttp
     implementation(platform(libs.com.squareup.okhttp3.bom))
     implementation(libs.com.squareup.okhttp3)

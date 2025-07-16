@@ -7,6 +7,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import dev.diegoflassa.fusecsgomatches.core.extensions.hiltActivityViewModel
 import kotlinx.coroutines.flow.collectLatest
 import dev.diegoflassa.fusecsgomatches.core.navigation.NavigationViewModel
 
@@ -14,7 +15,7 @@ private const val tag = "MainScreen"
 
 @Composable
 fun MainScreen(
-    navigationViewModel: NavigationViewModel = NavigationViewModel(),
+    navigationViewModel: NavigationViewModel = hiltActivityViewModel(),
     mainViewModel: MainViewModel = MainViewModel(),
 ) {
     val uiState by mainViewModel.uiState.collectAsState()

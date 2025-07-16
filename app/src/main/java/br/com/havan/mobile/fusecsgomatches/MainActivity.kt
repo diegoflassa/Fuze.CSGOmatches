@@ -7,7 +7,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -18,14 +17,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import br.com.havan.mobile.fusecsgomatches.navigation.NavDisplay
+import dagger.hilt.android.AndroidEntryPoint
+import dev.diegoflassa.fusecsgomatches.core.extensions.hiltActivityViewModel
 import dev.diegoflassa.fusecsgomatches.core.navigation.NavigationViewModel
 import dev.diegoflassa.fusecsgomatches.core.theme.FuseCSGOMatchesThemeContent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val navigationViewModel: NavigationViewModel by viewModels()
     private var keepSplashOnScreen = true
     private val splashScreenDisplayTime = 2000L
 
@@ -42,6 +43,7 @@ class MainActivity : ComponentActivity() {
         setTheme(com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar)
         enableEdgeToEdge()
         setContent {
+            val navigationViewModel: NavigationViewModel = hiltActivityViewModel()
             LockScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
             FuseCSGOMatchesThemeContent {
                 Surface(

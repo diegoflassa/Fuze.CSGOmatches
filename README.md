@@ -23,6 +23,8 @@ This project is built using modern Android development practices and libraries.
 * **MVI (Model-View-Intent)**: This architectural pattern is used to structure the presentation
   layer, promoting a unidirectional data flow and clear separation of concerns. It typically
   involves managing state, handling user intents, and updating the UI accordingly.
+* **Dependency Injection (Hilt)**: Uses Dagger Hilt for managing dependencies throughout the
+  application, simplifying the setup and providing a standard way to perform DI.
 * **100% Kotlin**: The entire project is written in Kotlin.
 * **Dependency Management**: Uses Gradle Version Catalogs (`libs.versions.toml`) for
   centralized and easier management of dependency versions.
@@ -31,8 +33,11 @@ This project is built using modern Android development practices and libraries.
 
 * **Jetpack Compose**: The UI is built entirely with Jetpack Compose, Android's modern
   declarative UI toolkit.
-    * **Compose Navigation**: Used for navigating between different screens within the app.
+    * **Navigation (androidx.navigation3)**: Utilized for navigating between different screens,
+        integrated with Jetpack Compose.
     * **Material 3**: Implements Material Design 3 components and theming.
+    * **ConstraintLayout for Compose**: Utilized for more complex layouts where
+        ConstraintLayout's capabilities are beneficial.
 * **Coil**: For efficient image loading in Compose.
 * **AndroidX Core Splashscreen**: Implements the modern Android splash screen.
 

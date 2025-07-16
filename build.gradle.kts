@@ -16,6 +16,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.com.google.devtools.ksp) apply false
     alias(libs.plugins.compose.compiler) apply false
+    alias(libs.plugins.hilt.android.gradle.plugin) apply false
 }
 
 verifyKeystore()
