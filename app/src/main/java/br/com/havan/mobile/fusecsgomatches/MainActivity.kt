@@ -1,5 +1,7 @@
 package br.com.havan.mobile.fusecsgomatches
 
+import android.app.Activity
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -11,9 +13,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 // import androidx.compose.material3.Scaffold // Not used after removing Greeting
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 // import androidx.compose.material3.Text // Not used after removing Greeting
 // import androidx.compose.runtime.Composable // Not used after removing Greeting
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 // import androidx.compose.ui.tooling.preview.Preview // Not used after removing Greeting
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
@@ -42,6 +47,7 @@ class MainActivity : ComponentActivity() {
         setTheme(com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar)
         enableEdgeToEdge()
         setContent {
+            LockScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
             FuseCSGOMatchesThemeContent {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -59,5 +65,16 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// Removed Greeting Composable and its Preview as they are no longer called
-// from onCreate after removing the second setContent
+@Suppress("SameParameterValue")
+@Composable
+private fun LockScreenOrientation(orientation: Int) {
+    val context = LocalContext.current
+    DisposableEffect(Unit) {
+        val activity = context as? Activity ?: return@DisposableEffect onDispose {}
+        val originalOrientation = activity.requestedOrientation
+        activity.requestedOrientation = orientation
+        onDispose {
+            activity.requestedOrientation = originalOrientation
+        }
+    }
+}
