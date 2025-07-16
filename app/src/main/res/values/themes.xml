@@ -6,13 +6,12 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="windowSplashScreenBackground">@color/launcher_color</item>
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher
-        </item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher</item>
         <item name="windowSplashScreenIconBackgroundColor">@color/launcher_color</item>
-        <item name="postSplashScreenTheme">@style/Theme.Comiqueta</item>
+        <item name="postSplashScreenTheme">@style/Theme.FuseCSGOmatches</item>
     </style>
 
-    <style name="Theme.Comiqueta" parent="Theme.Material3.DayNight.NoActionBar" >
+    <style name="Theme.FuseCSGOmatches" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="windowActionBar">false</item>
     </style>
 </resources>

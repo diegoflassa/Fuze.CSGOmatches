@@ -16,8 +16,8 @@ import kotlinx.coroutines.launch
 
 class NavigationViewModel() : ViewModel() {
 
-    private val _state = MutableStateFlow(NavigationUIState()) // Uses NavigationUIState
-    val state: StateFlow<NavigationUIState> = _state.asStateFlow() // Uses NavigationUIState
+    private val _state = MutableStateFlow(NavigationUIState())
+    val state: StateFlow<NavigationUIState> = _state.asStateFlow()
 
     private val _effect = MutableSharedFlow<NavigationEffect>()
     val effect: SharedFlow<NavigationEffect> = _effect.asSharedFlow()
@@ -29,55 +29,42 @@ class NavigationViewModel() : ViewModel() {
      * @param intent The navigation intent to process.
      */
     fun processIntent(intent: NavigationIntent) {
-        _state.update { currentState -> // currentState is of type NavigationUIState
+        _state.update { currentState ->
             when (intent) {
                 is NavigationIntent.NavigateTo -> {
-                    // Avoid adding duplicate screen if it's already at the top
                     if (currentState.backStack.lastOrNull() != intent.screen) {
                         currentState.copy(backStack = currentState.backStack + intent.screen)
                     } else {
-                        // Optional: Notify the user if they are already on the target screen.
                         viewModelScope.launch { _effect.emit(NavigationEffect.ShowToast("Already on this screen")) }
                         currentState // No change
                     }
                 }
 
-                is NavigationIntent.GoToHome -> {
-                    // Navigate to Home.
-                    // Current logic adds Home to the stack if not already at the top.
-                    // Change to if a true "clear stack and go home" is needed, e.g.,
-                    // currentState.copy(backStack = listOf(Screen.Home))
+                is NavigationIntent.GoToMain -> {
                     if (currentState.backStack.lastOrNull() != Screen.Main) {
                         currentState.copy(backStack = currentState.backStack + Screen.Main)
                     } else {
-                        currentState // No change
+                        currentState
                     }
                 }
 
                 is NavigationIntent.GoBack -> {
-                    // Go back if there's more than one screen in the stack
                     if (currentState.backStack.size > 1) {
                         currentState.copy(backStack = currentState.backStack.dropLast(1))
                     } else {
-                        // Emit an effect because we can't go back further
                         viewModelScope.launch {
                             _effect.emit(NavigationEffect.ShowToast("Cannot go back further"))
                         }
-                        currentState // Cannot go back from the initial screen, no state change
+                        currentState
                     }
                 }
 
                 is NavigationIntent.ReplaceAll -> {
-                    // Replace the entire back stack with the new screen
                     currentState.copy(backStack = listOf(intent.screen))
                 }
             }
         }
     }
-
-    // --- Convenience functions that dispatch intents ---
-    // These maintain a similar API to the previous version for ease of use from the UI,
-    // but now delegate to the MVI pattern's intent processing.
 
     /**
      * Navigates to a new screen by sending a [NavigationIntent.NavigateTo].
