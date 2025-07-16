@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
 
     private val navigationViewModel: NavigationViewModel by viewModels()
     private var keepSplashOnScreen = true
-    private val splashScreenDisplayTime = 2000L
+    private val splashScreenDisplayTime = 10000L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
