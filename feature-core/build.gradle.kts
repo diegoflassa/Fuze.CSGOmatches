@@ -17,9 +17,12 @@ kotlin {
 }
 
 dependencies {
-    //Common
+    //Unit tests
+    testImplementation(libs.junit)
 
-    //Common Testing
+    //Instrumented Tests
+    androidTestImplementation(libs.ax.test.ext.junit.ktx)
+    androidTestImplementation(libs.ax.test.expresso.core)
 
     //Compose
     implementation(platform(libs.ax.compose.bom))

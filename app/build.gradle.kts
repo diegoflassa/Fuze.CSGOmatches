@@ -21,6 +21,13 @@ dependencies {
     implementation(libs.ax.core.ktx)
     implementation(libs.com.google.android.material)
 
+    //Unit tests
+    testImplementation(libs.junit)
+
+    //Instrumented Tests
+    androidTestImplementation(libs.ax.test.ext.junit.ktx)
+    androidTestImplementation(libs.ax.test.expresso.core)
+
     //Compose
     implementation(platform(libs.ax.compose.bom))
     implementation(libs.ax.compose.ui)
@@ -45,7 +52,7 @@ dependencies {
     implementation(libs.ax.navigation3.viewmodel)
     //implementation(libs.ax.navigation3.adaptive)
 
-     //OkHttp
+    //OkHttp
     implementation(platform(libs.com.squareup.okhttp3.bom))
     implementation(libs.com.squareup.okhttp3)
     implementation(libs.com.squareup.okhttp3.logging.interceptor)

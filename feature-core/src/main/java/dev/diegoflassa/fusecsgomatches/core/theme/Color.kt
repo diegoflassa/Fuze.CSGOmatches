@@ -1,10 +1,7 @@
 package dev.diegoflassa.fusecsgomatches.core.theme
 
 import androidx.compose.material3.ColorScheme
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
@@ -102,10 +99,3 @@ fun getFuseCSGOMatchesColorScheme(
         else -> fuseCSGOMatchesColorScheme
     }
 }
-
-val ColorScheme.transparent: Color
-    @Composable
-    @ReadOnlyComposable
-    get() {
-        return Color(0x00000000)
-    }

@@ -24,10 +24,10 @@ object FuseCSGOMatchesTheme {
     val typography: FuseCSGOMatchesTypography
         @Composable @ReadOnlyComposable get() = LocalFuseCSGOMatchesTypography.current
 
-    val shapes: fusecsgomatchesShapes
+    val shapes: FuseCSGOMatchesShapes
         @Composable @ReadOnlyComposable get() = LocalFuseCSGOMatchesShapes.current
 
-    val dimen: fusecsgomatchesDimen
+    val dimen: FuseCSGOMatchesDimen
         @Composable @ReadOnlyComposable get() = LocalFuseCSGOMatchesDimen.current
 }
 

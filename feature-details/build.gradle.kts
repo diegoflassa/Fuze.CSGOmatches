@@ -16,6 +16,13 @@ dependencies {
     //Módulos
     implementation(project(":feature-core"))
 
+    //Unit tests
+    testImplementation(libs.junit)
+
+    //Instrumented Tests
+    androidTestImplementation(libs.ax.test.ext.junit.ktx)
+    androidTestImplementation(libs.ax.test.expresso.core)
+
     //Compose
     implementation(platform(libs.ax.compose.bom))
     implementation(libs.ax.compose.ui)

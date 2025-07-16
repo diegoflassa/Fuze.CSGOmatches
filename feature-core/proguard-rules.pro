@@ -29,7 +29,3 @@
     public static int v(...);
     public static int println(...);
 }
-
--keepclassmembers class dev.diegoflassa.fusecsgomatches.core.data.worker.SafFolderScanWorker {
-    public <init>(android.content.Context, androidx.work.WorkerParameters);
-}
