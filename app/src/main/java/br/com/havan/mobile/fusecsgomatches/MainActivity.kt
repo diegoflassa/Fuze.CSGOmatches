@@ -9,17 +9,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
-// import androidx.compose.foundation.layout.padding // Not used after removing Greeting
 import androidx.compose.material3.MaterialTheme
-// import androidx.compose.material3.Scaffold // Not used after removing Greeting
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-// import androidx.compose.material3.Text // Not used after removing Greeting
-// import androidx.compose.runtime.Composable // Not used after removing Greeting
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-// import androidx.compose.ui.tooling.preview.Preview // Not used after removing Greeting
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import br.com.havan.mobile.fusecsgomatches.navigation.NavDisplay
@@ -61,7 +56,6 @@ class MainActivity : ComponentActivity() {
                 navigationViewModel.goBack()
             }
         }
-        // Removed the second setContent block that was here
     }
 }
 

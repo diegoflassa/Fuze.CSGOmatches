@@ -52,10 +52,6 @@ ax-lifecycle-extensions = "2.2.0"
 #Splashscreen
 ax-splashscreen = "1.0.1"
 
-#Startup
-ax-startup-runtime = "1.2.0"
-
-
 #Other
 io-coil-kt-coil-compose = "2.7.0"
 
@@ -134,9 +130,6 @@ ax-lifecycle-extensions = { module = "androidx.lifecycle:lifecycle-extensions", 
 
 #Splashscreen
 ax-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "ax-splashscreen" }
-
-#Startup
-ax-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "ax-startup-runtime" }
 
 io-coil-kt-coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "io-coil-kt-coil-compose" }
 
