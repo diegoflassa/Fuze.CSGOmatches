@@ -1,6 +1,5 @@
 package dev.diegoflassa.fusecsgomatches.core.theme
 
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
@@ -19,7 +18,7 @@ data class FuseCSGOMatchesShapes(
 )
 
 class AgoraTagShape(
-    private val bottomLeftCornerRadiusDp: Dp = 16.dp // Only bottom-left has a radius
+    private val bottomLeftCornerRadiusDp: Dp = 16.dp
 ) : Shape {
     override fun createOutline(
         size: Size,

@@ -1,4 +1,4 @@
-package dev.diegoflassa.fusecsgomatches.main.data.network.dto
+package dev.diegoflassa.fusecsgomatches.main.data.dto
 
 import android.net.Uri
 import com.squareup.moshi.Json

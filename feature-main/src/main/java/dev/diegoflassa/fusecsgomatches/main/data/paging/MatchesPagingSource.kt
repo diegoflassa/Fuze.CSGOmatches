@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import dev.diegoflassa.fusecsgomatches.core.data.enums.MatchStatus
-import dev.diegoflassa.fusecsgomatches.main.data.network.dto.MatchDto
+import dev.diegoflassa.fusecsgomatches.main.data.dto.MatchDto
 import dev.diegoflassa.fusecsgomatches.main.data.repository.interfaces.IMatchesRepository
 import retrofit2.HttpException
 import java.io.IOException

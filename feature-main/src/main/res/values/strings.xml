@@ -15,4 +15,5 @@
     <string name="team_logo_desc">Logo of %1$s</string>
     <string name="now">NOW</string>
     <string name="scheduled_today">Today, %1$s</string>
+    <string name="league_and_series" translatable="false">%1$s - %2$s%s</string>
 </resources>

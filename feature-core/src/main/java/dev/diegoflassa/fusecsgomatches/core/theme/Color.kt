@@ -1,9 +1,6 @@
 package dev.diegoflassa.fusecsgomatches.core.theme
 
-import androidx.compose.material3.ColorScheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
 object FuseCSGOMatchesColors {
@@ -42,10 +39,14 @@ object FuseCSGOMatchesColors {
     val surfaceContainer = Color(0xFF272639)//Ok
     val surfaceContainerHigh = Color(0xFF272639)//Ok
     val surfaceContainerHighest = Color(0xFF272639)//Ok
+    val containerColorScheduledBadge = Color(0x33FAFAFA)//Ok
+
+    //Specifics Colors
+    val imageAbsentColor = Color(0xFFC4C4C4)//Ok
 }
 
 
-internal val fuseCSGOMatchesColorScheme = darkColorScheme(
+internal val fuseCSGOMatchesColorScheme = lightColorScheme(
     primary = FuseCSGOMatchesColors.primary,
     onPrimary = FuseCSGOMatchesColors.onPrimary,
     primaryContainer = FuseCSGOMatchesColors.primaryContainer,

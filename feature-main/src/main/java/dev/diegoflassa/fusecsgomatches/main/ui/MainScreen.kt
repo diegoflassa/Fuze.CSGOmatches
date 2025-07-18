@@ -11,10 +11,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
@@ -65,6 +67,8 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
@@ -75,22 +79,22 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import dev.diegoflassa.fusecsgomatches.core.data.enums.MatchStatus
 import dev.diegoflassa.fusecsgomatches.core.extensions.hiltActivityViewModel
-import dev.diegoflassa.fusecsgomatches.core.extensions.scaled
 import dev.diegoflassa.fusecsgomatches.core.navigation.NavigationViewModel
+import dev.diegoflassa.fusecsgomatches.core.theme.FuseCSGOMatchesColors
 import dev.diegoflassa.fusecsgomatches.core.theme.FuseCSGOMatchesTheme
 import dev.diegoflassa.fusecsgomatches.core.theme.FuseCSGOMatchesThemeContent
 import dev.diegoflassa.fusecsgomatches.main.R
-import dev.diegoflassa.fusecsgomatches.main.data.network.dto.GameDto
-import dev.diegoflassa.fusecsgomatches.main.data.network.dto.LeagueDto
-import dev.diegoflassa.fusecsgomatches.main.data.network.dto.LiveDto
-import dev.diegoflassa.fusecsgomatches.main.data.network.dto.MatchDto
-import dev.diegoflassa.fusecsgomatches.main.data.network.dto.OpponentDetailsDto
-import dev.diegoflassa.fusecsgomatches.main.data.network.dto.OpponentWrapperDto
-import dev.diegoflassa.fusecsgomatches.main.data.network.dto.ResultDto
-import dev.diegoflassa.fusecsgomatches.main.data.network.dto.SerieDto
-import dev.diegoflassa.fusecsgomatches.main.data.network.dto.TournamentDto
-import dev.diegoflassa.fusecsgomatches.main.data.network.dto.VideogameDto
-import dev.diegoflassa.fusecsgomatches.main.data.network.dto.WinnerDto
+import dev.diegoflassa.fusecsgomatches.main.data.dto.GameDto
+import dev.diegoflassa.fusecsgomatches.main.data.dto.LeagueDto
+import dev.diegoflassa.fusecsgomatches.main.data.dto.LiveDto
+import dev.diegoflassa.fusecsgomatches.main.data.dto.MatchDto
+import dev.diegoflassa.fusecsgomatches.main.data.dto.OpponentDetailsDto
+import dev.diegoflassa.fusecsgomatches.main.data.dto.OpponentWrapperDto
+import dev.diegoflassa.fusecsgomatches.main.data.dto.ResultDto
+import dev.diegoflassa.fusecsgomatches.main.data.dto.SerieDto
+import dev.diegoflassa.fusecsgomatches.main.data.dto.TournamentDto
+import dev.diegoflassa.fusecsgomatches.main.data.dto.VideogameDto
+import dev.diegoflassa.fusecsgomatches.main.data.dto.WinnerDto
 import java.time.Instant
 import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
@@ -122,7 +126,7 @@ fun MainScreen(
                 }
 
                 is MainEffect.NavigateToDetails -> {
-                    navigationViewModel.navigateToDetails(effect.matchId)
+                    navigationViewModel.navigateToDetails(effect.matchIdOrSlug)
                 }
             }
         }
@@ -136,7 +140,11 @@ fun MainScreen(
         isRefreshing = matchesLazyItems.loadState.refresh is LoadState.Loading,
         onRefresh = { matchesLazyItems.refresh() },
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .safeDrawingPadding()
+        ) {
             when (val refreshLoadState = matchesLazyItems.loadState.refresh) {
                 is LoadState.Loading -> {
                     Box(
@@ -243,8 +251,6 @@ fun MainScreenContent(
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(
-                start = FuseCSGOMatchesTheme.dimen.mediumPadding,
-                top = FuseCSGOMatchesTheme.dimen.mediumLargePadding,
                 bottom = FuseCSGOMatchesTheme.dimen.mediumPadding
             )
         )
@@ -357,8 +363,6 @@ private fun MainScreenContentPreview(
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(
-                start = FuseCSGOMatchesTheme.dimen.mediumPadding,
-                top = FuseCSGOMatchesTheme.dimen.mediumLargePadding,
                 bottom = FuseCSGOMatchesTheme.dimen.mediumPadding
             )
         )
@@ -384,28 +388,56 @@ fun MatchCard(match: MatchDto, onIntent: ((MainIntent) -> Unit)? = null) {
             .sizeIn(maxWidth = 312.dp)
             .aspectRatio(16f / 9f)
             .clickable(enabled = onIntent != null) {
-                onIntent?.invoke(MainIntent.OnMatchClicked(match.id ?: 0))
+                onIntent?.invoke(MainIntent.OnMatchClicked(match.id.toString()))
             },
         colors = CardDefaults.cardColors()
             .copy(containerColor = FuseCSGOMatchesTheme.colorScheme.surfaceContainerHighest),
         shape = RoundedCornerShape(FuseCSGOMatchesTheme.dimen.mediumPadding),
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+            val (topRef, mainContentRef, bottomRowRef) = createRefs()
+
             if (match.live?.supported == true && match.status == MatchStatus.IN_PROGRESS) {
-                NowBadge(modifier = Modifier.align(Alignment.TopEnd))
+                NowBadge(modifier = Modifier.constrainAs(topRef) {
+                    top.linkTo(parent.top)
+                    end.linkTo(parent.end)
+                })
+            } else if (match.status == MatchStatus.SCHEDULED) {
+                val scheduledDate = formatScheduledAt(Instant.now())
+                ScheduledBadge(modifier = Modifier.constrainAs(topRef) {
+                    top.linkTo(parent.top)
+                    end.linkTo(parent.end)
+                }, text = scheduledDate)
+            } else {
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(FuseCSGOMatchesTheme.dimen.badgeHeight)
+                        .constrainAs(topRef) {
+                            top.linkTo(parent.top)
+                            end.linkTo(parent.end)
+                        }
+                )
             }
-            if (match.status == MatchStatus.SCHEDULED) {
-                val scheduledDate = formatScheduledAt(match.scheduledAt)
-                ScheduledBadge(modifier = Modifier.align(Alignment.TopEnd), text = scheduledDate)
-            }
-            Row(
+            val noPadding = FuseCSGOMatchesTheme.dimen.noPadding
+            ConstraintLayout(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 25.dp, bottom = FuseCSGOMatchesTheme.dimen.largePadding)
-                    .height(119.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+                    .constrainAs(mainContentRef) {
+                        top.linkTo(
+                            topRef.bottom,
+                            margin = noPadding
+                        )
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        bottom.linkTo(bottomRowRef.top)
+                        height =
+                            Dimension.fillToConstraints
+                    }
+                    .padding(horizontal = FuseCSGOMatchesTheme.dimen.largePadding)
             ) {
+                val (team1DisplayRef, vsTextRef, team2DisplayRef) = createRefs()
+
                 val team1 = match.opponents?.getOrNull(0)?.opponent
                 val team2 = match.opponents?.getOrNull(1)?.opponent
 
@@ -421,31 +453,167 @@ fun MatchCard(match: MatchDto, onIntent: ((MainIntent) -> Unit)? = null) {
 
                 val team1ImageUrl = team1?.imageUrl
                 val team2ImageUrl = team2?.imageUrl
+                val teamImageVsPadding = FuseCSGOMatchesTheme.dimen.teamImageVsPadding
                 TeamDisplay(
                     modifier = Modifier
-                        .padding(end = 20.dp),
+                        .constrainAs(team1DisplayRef) {
+                            end.linkTo(
+                                vsTextRef.start,
+                                margin = teamImageVsPadding
+                            )
+                            top.linkTo(parent.top)
+                            start.linkTo(parent.start)
+                            width = Dimension.fillToConstraints
+                        },
                     name = team1Name,
                     imageUrl = team1ImageUrl,
+                )
+                TeamDisplay(
+                    modifier = Modifier
+                        .constrainAs(team2DisplayRef) {
+                            start.linkTo(vsTextRef.end, margin = teamImageVsPadding)
+                            top.linkTo(parent.top)
+                            end.linkTo(parent.end)
+                            width = Dimension.fillToConstraints
+                        },
+                    name = team2Name,
+                    imageUrl = team2ImageUrl,
                 )
 
                 Text(
                     modifier = Modifier
-                        .width(13.dp)
-                        .height(14.dp)
-                        .align(Alignment.CenterVertically),
+                        .constrainAs(vsTextRef) {
+                            centerHorizontallyTo(parent)
+                            centerVerticallyTo(team1DisplayRef)
+                        },
                     text = stringResource(id = R.string.vs),
                     style = FuseCSGOMatchesTheme.typography.textStyleVs
                 )
+            }
 
-                TeamDisplay(
-                    name = team2Name,
-                    imageUrl = team2ImageUrl,
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .constrainAs(bottomRowRef) {
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+            ) {
+                Spacer(
                     modifier = Modifier
-                        .padding(start = 20.dp),
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(FuseCSGOMatchesColors.containerColorScheduledBadge)
                 )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(FuseCSGOMatchesTheme.dimen.largePadding)
+                        .padding(
+                            start = FuseCSGOMatchesTheme.dimen.mediumPadding,
+                            top = FuseCSGOMatchesTheme.dimen.smallPadding,
+                            end = FuseCSGOMatchesTheme.dimen.mediumPadding,
+                            bottom = FuseCSGOMatchesTheme.dimen.smallPadding
+                        ),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    val leagueAndSeries = stringResource(
+                        R.string.league_and_series,
+                        match.league?.name ?: "",
+                        match.serie?.name ?: ""
+                    )
+                    LeagueImage(match.league?.imageUrl, leagueAndSeries)
+                    Spacer(
+                        modifier = Modifier
+                            .width(8.dp)
+                            .fillMaxHeight()
+                    )
+                    Text(
+                        text = leagueAndSeries,
+                        style = FuseCSGOMatchesTheme.typography.textStyleLeagueAndSeries
+                    )
+                }
             }
         }
     }
+}
+
+@Composable
+fun TeamDisplay(
+    name: String,
+    imageUrl: Uri?,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .padding(vertical = FuseCSGOMatchesTheme.dimen.extraSmallPadding),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        val context = LocalContext.current
+
+        val brokenImageErrorPainter = rememberVectorPainter(image = Icons.Outlined.BrokenImage)
+
+        val whiteCirclePainter =
+            remember { ColorPainter(FuseCSGOMatchesColors.imageAbsentColor) }
+
+        val actualModel = if (imageUrl == Uri.EMPTY) null else imageUrl
+
+        AsyncImage(
+            model = ImageRequest.Builder(context)
+                .data(actualModel)
+                .crossfade(true)
+                .build(),
+            placeholder = whiteCirclePainter,
+            error = brokenImageErrorPainter,
+            fallback = whiteCirclePainter,
+            contentDescription = stringResource(R.string.team_logo_desc, name),
+            contentScale = ContentScale.Fit,
+            modifier = Modifier
+                .size(60.dp)
+                .clip(CircleShape)
+        )
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(
+            text = name,
+            color = Color.White,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+            textAlign = TextAlign.Center,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
+}
+
+@Composable
+fun LeagueImage(imageUrl: Uri?, name: String) {
+    val context = LocalContext.current
+
+    val brokenImageErrorPainter = rememberVectorPainter(image = Icons.Outlined.BrokenImage)
+
+    val whiteCirclePainter =
+        remember { ColorPainter(FuseCSGOMatchesColors.imageAbsentColor) }
+
+    val actualModel = if (imageUrl == Uri.EMPTY) null else imageUrl
+
+    AsyncImage(
+        model = ImageRequest.Builder(context)
+            .data(actualModel)
+            .crossfade(true)
+            .build(),
+        placeholder = whiteCirclePainter,
+        error = brokenImageErrorPainter,
+        fallback = whiteCirclePainter,
+        contentDescription = stringResource(R.string.team_logo_desc, name),
+        contentScale = ContentScale.Fit,
+        modifier = Modifier
+            .size(FuseCSGOMatchesTheme.dimen.mediumPadding)
+            .clip(CircleShape)
+    )
 }
 
 @Composable
@@ -507,7 +675,7 @@ fun NowBadge(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .sizeIn(minWidth = 43.dp)
-            .height(25.dp)
+            .height(FuseCSGOMatchesTheme.dimen.badgeHeight)
             .wrapContentWidth()
             .clip(FuseCSGOMatchesTheme.shapes.agora)
             .background(FuseCSGOMatchesTheme.colorScheme.errorContainer)
@@ -538,13 +706,16 @@ fun ScheduledBadge(text: String, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .sizeIn(minWidth = 43.dp)
-            .height(25.dp)
+            .height(FuseCSGOMatchesTheme.dimen.badgeHeight)
             .wrapContentWidth()
             .clip(FuseCSGOMatchesTheme.shapes.agora)
-            .background(FuseCSGOMatchesTheme.colorScheme.errorContainer)
+            .background(FuseCSGOMatchesColors.containerColorScheduledBadge)
             .padding(horizontal = FuseCSGOMatchesTheme.dimen.smallMediumPadding, vertical = 6.dp)
     ) {
         Text(
+            modifier = Modifier
+                .wrapContentSize()
+                .padding(top = 2.dp),
             text = text,
             style = FuseCSGOMatchesTheme.typography.textStyleNow,
         )
@@ -559,47 +730,6 @@ fun ScheduledBadgePreview() {
             val formattedText = formatScheduledAt(Instant.now())
             ScheduledBadge(text = formattedText)
         }
-    }
-}
-
-@Composable
-fun TeamDisplay(
-    name: String,
-    imageUrl: Uri?,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier.padding(vertical = FuseCSGOMatchesTheme.dimen.extraSmallPadding),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        val errorPainter = rememberVectorPainter(image = Icons.Outlined.BrokenImage)
-        val placeholderCircleColor = Color(0xFFC4C4C4)
-
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(imageUrl)
-                .crossfade(true)
-                .build(),
-            placeholder = ColorPainter(placeholderCircleColor),
-            error = errorPainter,
-            contentDescription = stringResource(R.string.team_logo_desc, name),
-            contentScale = ContentScale.Fit,
-            modifier = Modifier
-                .size(60.dp.scaled())
-                .clip(CircleShape)
-                .background(FuseCSGOMatchesTheme.colorScheme.surfaceContainer.copy(alpha = 0.5f))
-        )
-        Spacer(modifier = Modifier.height(6.dp))
-        Text(
-            text = name,
-            color = Color.White,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
-            textAlign = TextAlign.Center,
-            maxLines = 3,
-            overflow = TextOverflow.Ellipsis
-        )
     }
 }
 
@@ -621,7 +751,6 @@ class SampleMatchDtoProvider : PreviewParameterProvider<MatchDto> {
 @Composable
 fun MatchCardPreview(@PreviewParameter(SampleMatchDtoProvider::class) match: MatchDto) {
     FuseCSGOMatchesThemeContent {
-        //Surface(color = DarkBackground) {
         Surface {
             MatchCard(match = match)
         }
@@ -659,7 +788,7 @@ private fun createSampleMatchDto(
     leagueName: String = "ESL Pro League",
     team1Name: String = "Team Alpha",
     team1ImageUrl: String? = "https://via.placeholder.com/150/FF0000/FFFFFF?Text=A",
-    team2Name: String = "Team Bravo",
+    team2Name: String = "Team Bravo With A Very Long Name",
     team2ImageUrl: String? = "https://via.placeholder.com/150/0000FF/FFFFFF?Text=B",
     team1Score: Int = 0,
     team2Score: Int = 0,
@@ -678,7 +807,7 @@ private fun createSampleMatchDto(
         leagueId = id * 10,
         league = LeagueDto(
             id = id * 10,
-            imageUrl = team1ImageUrl?.toUri(), // Placeholder
+            imageUrl = team1ImageUrl?.toUri(),
             name = leagueName,
             slug = leagueName.lowercase().replace(" ", "-"),
             url = null,
@@ -808,8 +937,8 @@ private fun sampleMatchesForPreview(count: Int): List<MatchDto> {
             name = "Match ${index + 1}: Team ${'A' + index % 3} vs Team ${'X' + index % 4}",
             status = when (index % 5) {
                 0 -> MatchStatus.IN_PROGRESS
-                1 -> MatchStatus.ENDED
-                2 -> MatchStatus.SCHEDULED
+                1 -> MatchStatus.SCHEDULED
+                2 -> MatchStatus.ENDED
                 3 -> MatchStatus.SCHEDULED
                 else -> MatchStatus.ENDED
             },
@@ -861,7 +990,7 @@ private fun MainScreenContentPreviewFoldableWithData() {
 @Composable
 private fun MainScreenContentPreviewTabletWithData() {
     FuseCSGOMatchesThemeContent {
-        val sampleMatches = sampleMatchesForPreview(20) // More items for tablet
+        val sampleMatches = sampleMatchesForPreview(20)
         MainScreenContentPreview(
             matches = sampleMatches,
             onIntent = {}

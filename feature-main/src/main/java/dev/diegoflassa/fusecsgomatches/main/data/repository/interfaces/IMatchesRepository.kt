@@ -1,6 +1,6 @@
 package dev.diegoflassa.fusecsgomatches.main.data.repository.interfaces
 
-import dev.diegoflassa.fusecsgomatches.main.data.network.dto.MatchDto
+import dev.diegoflassa.fusecsgomatches.main.data.dto.MatchDto
 import retrofit2.Response
 
 /**

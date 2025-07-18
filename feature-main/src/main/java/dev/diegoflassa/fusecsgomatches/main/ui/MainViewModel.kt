@@ -7,7 +7,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.diegoflassa.fusecsgomatches.main.data.network.dto.MatchDto
+import dev.diegoflassa.fusecsgomatches.main.data.dto.MatchDto
 import dev.diegoflassa.fusecsgomatches.main.data.paging.MatchesPagingSource
 import dev.diegoflassa.fusecsgomatches.main.data.repository.interfaces.IMatchesRepository
 import kotlinx.coroutines.channels.Channel
@@ -50,7 +50,7 @@ class MainViewModel @Inject constructor(
                     fetchMatches() // This will now create a new Flow from Pager
                 }
                 is MainIntent.OnMatchClicked -> {
-                    _effect.send(MainEffect.NavigateToDetails(intent.matchId))
+                    _effect.send(MainEffect.NavigateToDetails(intent.matchIdOrSlug))
                 }
             }
         }

@@ -2,7 +2,6 @@
 
 package dev.diegoflassa.fusecsgomatches.core.navigation
 
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -89,8 +88,8 @@ class NavigationViewModel @Inject constructor() : ViewModel() {
     /**
      * Navigates to the Categories screen.
      */
-    fun navigateToDetails(matchId: Long) {
-        processIntent(NavigationIntent.NavigateTo(Screen.Details))
+    fun navigateToDetails(matchIdOrSlug: String) {
+        processIntent(NavigationIntent.NavigateTo(Screen.Details(matchIdOrSlug)))
     }
 
     /**
