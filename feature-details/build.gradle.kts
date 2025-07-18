@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-    namespace = "dev.diegoflassa.fusecsgomatches.home"
+    namespace = "dev.diegoflassa.fusecsgomatches.details"
 }
 
 dependencies {
@@ -41,6 +41,10 @@ dependencies {
     implementation(libs.ax.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
 
+    //Paging
+    implementation(libs.ax.paging.runtime.ktx)
+    implementation(libs.ax.paging.compose)
+
     //Compose Navigation 3
     implementation(libs.ax.navigation3.runtime)
     implementation(libs.ax.navigation3.ui)
@@ -66,6 +70,7 @@ dependencies {
     //Retrofit 2
     implementation(libs.com.squareup.retrofit2.retrofit)
     implementation(libs.com.squareup.retrofit2.converter.moshi)
+    implementation(libs.com.squareup.retrofit2.converter.gson)
 
     //Splashscreen
     implementation(libs.ax.core.splashscreen)

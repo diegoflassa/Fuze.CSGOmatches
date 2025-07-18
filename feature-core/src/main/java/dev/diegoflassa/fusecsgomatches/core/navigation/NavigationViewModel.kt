@@ -82,14 +82,14 @@ class NavigationViewModel @Inject constructor() : ViewModel() {
     /**
      * Navigates to the Categories screen.
      */
-    fun navigateToMain(comicPath: Uri) {
+    fun navigateToMain() {
         processIntent(NavigationIntent.NavigateTo(Screen.Main))
     }
 
     /**
      * Navigates to the Categories screen.
      */
-    fun navigateToDetails() {
+    fun navigateToDetails(matchId: Long) {
         processIntent(NavigationIntent.NavigateTo(Screen.Details))
     }
 

@@ -7,95 +7,78 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
 
 object FuseCSGOMatchesColors {
-    val primaryDark = Color(0xFF161621)//Ok
-    val onPrimaryDark = Color(0xFFFFFFFF)//Ok
-    val primaryContainerDark = Color(0xFF161621)//Ok
-    val onPrimaryContainerDark = Color(0xFFFFFFFF)//Ok
-    val secondaryDark = Color(0xFF272639)//Ok
-    val onSecondaryDark = Color(0xFFFFFFFF)//Ok
-    val secondaryContainerDark = Color(0xFF272639)//Ok
-    val onSecondaryContainerDark = Color(0xFFFFFFFF)//Ok
-    val tertiaryDark = Color(0xFF00FF00)
-    val onTertiaryDark = Color(0xFF0000FF)
-    val tertiaryContainerDark = Color(0xFFFF0000)
-    val onTertiaryContainerDark = Color(0xFF00FF00)
-    val errorDark = Color(0xFFFFB4AB)//Ok
-    val onErrorDark = Color(0xFF690005)//Ok
-    val errorContainerDark = Color(0xFF93000A)//Ok
-    val onErrorContainerDark = Color(0xFFFFDAD6)//Ok
-    val backgroundDark = Color(0xFF161621)//OK
-    val onBackgroundDark = Color(0xFFFFFFFF)//OK
-    val surfaceDark = Color(0xFF0000FF)
-    val onSurfaceDark = Color(0xFFFF0000)
-    val surfaceVariantDark = Color(0xFF00FF00)
-    val onSurfaceVariantDark = Color(0xFF0000FF)
-    val outlineDark = Color(0xFFFF0000)
-    val outlineVariantDark = Color(0xFF00FF00)
-    val scrimDark = Color(0xFF0000FF)
-    val inverseSurfaceDark = Color(0xFFFF0000)
-    val inverseOnSurfaceDark = Color(0xFF00FF00)
-    val inversePrimaryDark = Color(0xFF0000FF)
-    val surfaceDimDark = Color(0xFFFF0000)
-    val surfaceBrightDark = Color(0xFF00FF00)
-    val surfaceContainerLowestDark = Color(0xFF0000FF)
-    val surfaceContainerLowDark = Color(0xFFFF0000)
-    val surfaceContainerDark = Color(0xFF00FF00)
-    val surfaceContainerHighDark = Color(0xFF0000FF)
-    val surfaceContainerHighestDark = Color(0xFFFF0000)
+    val primary = Color(0xFF161621)//Ok
+    val onPrimary = Color(0xFFFFFFFF)//Ok
+    val primaryContainer = Color(0xFF161621)//Ok
+    val onPrimaryContainer = Color(0xFFFFFFFF)//Ok
+    val secondary = Color(0xFF272639)//Ok
+    val onSecondary = Color(0xFFFFFFFF)//Ok
+    val secondaryContainer = Color(0xFF272639)//Ok
+    val onSecondaryContainer = Color(0xFF161621)//Ok
+    val tertiary = Color(0xFFFFFFFF)//Ok
+    val onTertiary = Color(0xFF0000FF)
+    val tertiaryContainer = Color(0xFFFF0000)
+    val onTertiaryContainer = Color(0xFF00FF00)
+    val error = Color(0xFFFFB4AB)//Ok
+    val onError = Color(0xFF690005)//Ok
+    val errorContainer = Color(0xFFF42A35)//Ok
+    val onErrorContainer = Color(0xFFFFDAD6)//Ok
+    val background = Color(0xFF161621)//OK
+    val onBackground = Color(0xFFFFFFFF)//OK
+    val surface = Color(0xFF161621)//OK
+    val onSurface = Color(0xFFFFFFFF)//OK
+    val surfaceVariant = Color(0xFF00FF00)
+    val onSurfaceVariant = Color(0xFF0000FF)
+    val outline = Color(0xFFFF0000)
+    val outlineVariant = Color(0xFF00FF00)
+    val scrim = Color(0xFF0000FF)
+    val inverseSurface = Color(0xFFFF0000)
+    val inverseOnSurface = Color(0xFF00FF00)
+    val inversePrimary = Color(0xFF0000FF)
+    val surfaceDim = Color(0xFFFF0000)
+    val surfaceBright = Color(0xFF00FF00)
+    val surfaceContainerLowest = Color(0xFF272639)//Ok
+    val surfaceContainerLow = Color(0xFF272639)//Ok
+    val surfaceContainer = Color(0xFF272639)//Ok
+    val surfaceContainerHigh = Color(0xFF272639)//Ok
+    val surfaceContainerHighest = Color(0xFF272639)//Ok
 }
 
 
 internal val fuseCSGOMatchesColorScheme = darkColorScheme(
-    primary = FuseCSGOMatchesColors.primaryDark,
-    onPrimary = FuseCSGOMatchesColors.onPrimaryDark,
-    primaryContainer = FuseCSGOMatchesColors.primaryContainerDark,
-    onPrimaryContainer = FuseCSGOMatchesColors.onPrimaryContainerDark,
-    secondary = FuseCSGOMatchesColors.secondaryDark,
-    onSecondary = FuseCSGOMatchesColors.onSecondaryDark,
-    secondaryContainer = FuseCSGOMatchesColors.secondaryContainerDark,
-    onSecondaryContainer = FuseCSGOMatchesColors.onSecondaryContainerDark,
-    tertiary = FuseCSGOMatchesColors.tertiaryDark,
-    onTertiary = FuseCSGOMatchesColors.onTertiaryDark,
-    tertiaryContainer = FuseCSGOMatchesColors.tertiaryContainerDark,
-    onTertiaryContainer = FuseCSGOMatchesColors.onTertiaryContainerDark,
-    error = FuseCSGOMatchesColors.errorDark,
-    onError = FuseCSGOMatchesColors.onErrorDark,
-    errorContainer = FuseCSGOMatchesColors.errorContainerDark,
-    onErrorContainer = FuseCSGOMatchesColors.onErrorContainerDark,
-    background = FuseCSGOMatchesColors.backgroundDark,
-    onBackground = FuseCSGOMatchesColors.onBackgroundDark,
-    surface = FuseCSGOMatchesColors.surfaceDark,
-    onSurface = FuseCSGOMatchesColors.onSurfaceDark,
-    surfaceVariant = FuseCSGOMatchesColors.surfaceVariantDark,
-    onSurfaceVariant = FuseCSGOMatchesColors.onSurfaceVariantDark,
-    outline = FuseCSGOMatchesColors.outlineDark,
-    outlineVariant = FuseCSGOMatchesColors.outlineVariantDark,
-    scrim = FuseCSGOMatchesColors.scrimDark,
-    inverseSurface = FuseCSGOMatchesColors.inverseSurfaceDark,
-    inverseOnSurface = FuseCSGOMatchesColors.inverseOnSurfaceDark,
-    inversePrimary = FuseCSGOMatchesColors.inversePrimaryDark,
-    surfaceDim = FuseCSGOMatchesColors.surfaceDimDark,
-    surfaceBright = FuseCSGOMatchesColors.surfaceBrightDark,
-    surfaceContainerLowest = FuseCSGOMatchesColors.surfaceContainerLowestDark,
-    surfaceContainerLow = FuseCSGOMatchesColors.surfaceContainerLowDark,
-    surfaceContainer = FuseCSGOMatchesColors.surfaceContainerDark,
-    surfaceContainerHigh = FuseCSGOMatchesColors.surfaceContainerHighDark,
-    surfaceContainerHighest = FuseCSGOMatchesColors.surfaceContainerHighestDark,
+    primary = FuseCSGOMatchesColors.primary,
+    onPrimary = FuseCSGOMatchesColors.onPrimary,
+    primaryContainer = FuseCSGOMatchesColors.primaryContainer,
+    onPrimaryContainer = FuseCSGOMatchesColors.onPrimaryContainer,
+    secondary = FuseCSGOMatchesColors.secondary,
+    onSecondary = FuseCSGOMatchesColors.onSecondary,
+    secondaryContainer = FuseCSGOMatchesColors.secondaryContainer,
+    onSecondaryContainer = FuseCSGOMatchesColors.onSecondaryContainer,
+    tertiary = FuseCSGOMatchesColors.tertiary,
+    onTertiary = FuseCSGOMatchesColors.onTertiary,
+    tertiaryContainer = FuseCSGOMatchesColors.tertiaryContainer,
+    onTertiaryContainer = FuseCSGOMatchesColors.onTertiaryContainer,
+    error = FuseCSGOMatchesColors.error,
+    onError = FuseCSGOMatchesColors.onError,
+    errorContainer = FuseCSGOMatchesColors.errorContainer,
+    onErrorContainer = FuseCSGOMatchesColors.onErrorContainer,
+    background = FuseCSGOMatchesColors.background,
+    onBackground = FuseCSGOMatchesColors.onBackground,
+    surface = FuseCSGOMatchesColors.surface,
+    onSurface = FuseCSGOMatchesColors.onSurface,
+    surfaceVariant = FuseCSGOMatchesColors.surfaceVariant,
+    onSurfaceVariant = FuseCSGOMatchesColors.onSurfaceVariant,
+    outline = FuseCSGOMatchesColors.outline,
+    outlineVariant = FuseCSGOMatchesColors.outlineVariant,
+    scrim = FuseCSGOMatchesColors.scrim,
+    inverseSurface = FuseCSGOMatchesColors.inverseSurface,
+    inverseOnSurface = FuseCSGOMatchesColors.inverseOnSurface,
+    inversePrimary = FuseCSGOMatchesColors.inversePrimary,
+    surfaceDim = FuseCSGOMatchesColors.surfaceDim,
+    surfaceBright = FuseCSGOMatchesColors.surfaceBright,
+    surfaceContainerLowest = FuseCSGOMatchesColors.surfaceContainerLowest,
+    surfaceContainerLow = FuseCSGOMatchesColors.surfaceContainerLow,
+    surfaceContainer = FuseCSGOMatchesColors.surfaceContainer,
+    surfaceContainerHigh = FuseCSGOMatchesColors.surfaceContainerHigh,
+    surfaceContainerHighest = FuseCSGOMatchesColors.surfaceContainerHighest,
 )
-
-@Composable
-@ReadOnlyComposable
-fun getFuseCSGOMatchesColorScheme(
-    darkTheme: Boolean,
-    //dynamicColor: Boolean = true
-): ColorScheme {
-    return when {
-        //dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-        //    val context = LocalContext.current
-        //    if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        //}
-
-        darkTheme -> fuseCSGOMatchesColorScheme
-        else -> fuseCSGOMatchesColorScheme
-    }
-}

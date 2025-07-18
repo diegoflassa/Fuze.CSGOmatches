@@ -18,7 +18,7 @@ dependencyResolutionManagement {
         }
     }
 }
-rootProject.name = "Fuse CSGO Matches"
+rootProject.name = "Fuse CSGO"
 include(":app")
 include(":feature-core")
 include(":feature-main")

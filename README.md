@@ -9,7 +9,7 @@ Offensive (CS:GO) matches.
 
 * Displays a list of CS:GO matches.
 * Shows details for a selected match.
-* Allows filtering or searching for matches.
+* **Localization**: Supports both English (en) and Portuguese (pt) languages.
 
 ## Tech Stack & Architectural Decisions
 
@@ -34,10 +34,10 @@ This project is built using modern Android development practices and libraries.
 * **Jetpack Compose**: The UI is built entirely with Jetpack Compose, Android's modern
   declarative UI toolkit.
     * **Navigation (androidx.navigation3)**: Utilized for navigating between different screens,
-        integrated with Jetpack Compose.
+      integrated with Jetpack Compose.
     * **Material 3**: Implements Material Design 3 components and theming.
     * **ConstraintLayout for Compose**: Utilized for more complex layouts where
-        ConstraintLayout's capabilities are beneficial.
+      ConstraintLayout's capabilities are beneficial.
 * **Coil**: For efficient image loading in Compose.
 * **AndroidX Core Splashscreen**: Implements the modern Android splash screen.
 

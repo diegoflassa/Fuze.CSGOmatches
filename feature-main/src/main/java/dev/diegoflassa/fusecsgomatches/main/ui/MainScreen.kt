@@ -1,0 +1,870 @@
+package dev.diegoflassa.fusecsgomatches.main.ui
+
+import android.net.Uri
+import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material.icons.outlined.BrokenImage
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import dev.diegoflassa.fusecsgomatches.core.data.enums.MatchStatus
+import dev.diegoflassa.fusecsgomatches.core.extensions.hiltActivityViewModel
+import dev.diegoflassa.fusecsgomatches.core.extensions.scaled
+import dev.diegoflassa.fusecsgomatches.core.navigation.NavigationViewModel
+import dev.diegoflassa.fusecsgomatches.core.theme.FuseCSGOMatchesTheme
+import dev.diegoflassa.fusecsgomatches.core.theme.FuseCSGOMatchesThemeContent
+import dev.diegoflassa.fusecsgomatches.main.R
+import dev.diegoflassa.fusecsgomatches.main.data.network.dto.GameDto
+import dev.diegoflassa.fusecsgomatches.main.data.network.dto.LeagueDto
+import dev.diegoflassa.fusecsgomatches.main.data.network.dto.LiveDto
+import dev.diegoflassa.fusecsgomatches.main.data.network.dto.MatchDto
+import dev.diegoflassa.fusecsgomatches.main.data.network.dto.OpponentDetailsDto
+import dev.diegoflassa.fusecsgomatches.main.data.network.dto.OpponentWrapperDto
+import dev.diegoflassa.fusecsgomatches.main.data.network.dto.ResultDto
+import dev.diegoflassa.fusecsgomatches.main.data.network.dto.SerieDto
+import dev.diegoflassa.fusecsgomatches.main.data.network.dto.TournamentDto
+import dev.diegoflassa.fusecsgomatches.main.data.network.dto.VideogameDto
+import dev.diegoflassa.fusecsgomatches.main.data.network.dto.WinnerDto
+import java.time.Instant
+import kotlinx.coroutines.flow.collectLatest
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
+import java.time.temporal.WeekFields
+import java.util.Locale
+import kotlin.math.abs
+
+private const val tag = "MainScreen"
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MainScreen(
+    navigationViewModel: NavigationViewModel = hiltActivityViewModel(),
+) {
+    val mainViewModel: MainViewModel = hiltViewModel()
+    val uiState by mainViewModel.uiState.collectAsState()
+    val matchesLazyItems: LazyPagingItems<MatchDto> =
+        uiState.matchesFlow.collectAsLazyPagingItems()
+
+    LaunchedEffect(key1 = mainViewModel.effect) {
+        mainViewModel.effect.collectLatest { effect ->
+            when (effect) {
+                is MainEffect.ShowError -> {
+                    Log.e(tag, "Error effect: ${effect.message}")
+                }
+
+                is MainEffect.NavigateToDetails -> {
+                    navigationViewModel.navigateToDetails(effect.matchId)
+                }
+            }
+        }
+    }
+
+    val pullToRefreshState = rememberPullToRefreshState()
+
+    PullToRefreshBox(
+        modifier = Modifier.fillMaxSize(),
+        state = pullToRefreshState,
+        isRefreshing = matchesLazyItems.loadState.refresh is LoadState.Loading,
+        onRefresh = { matchesLazyItems.refresh() },
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            when (val refreshLoadState = matchesLazyItems.loadState.refresh) {
+                is LoadState.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = FuseCSGOMatchesTheme.colorScheme.tertiary)
+                    }
+                }
+
+                is LoadState.Error -> {
+                    val error = refreshLoadState.error
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(FuseCSGOMatchesTheme.dimen.mediumPadding),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.ErrorOutline,
+                                contentDescription = null,
+                                tint = FuseCSGOMatchesTheme.colorScheme.onError,
+                                modifier = Modifier.size(FuseCSGOMatchesTheme.dimen.bigLargePadding)
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = error.localizedMessage
+                                    ?: stringResource(id = R.string.error_loading_matches),
+                                color = FuseCSGOMatchesTheme.colorScheme.onError,
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Spacer(modifier = Modifier.height(FuseCSGOMatchesTheme.dimen.mediumPadding))
+                            Button(
+                                onClick = { matchesLazyItems.retry() },
+                                colors = ButtonDefaults.buttonColors(containerColor = FuseCSGOMatchesTheme.colorScheme.error)
+                            ) {
+                                Text(stringResource(id = R.string.retry))
+                            }
+                        }
+                    }
+                }
+
+                is LoadState.NotLoading -> {
+                    if (matchesLazyItems.itemCount == 0 && matchesLazyItems.loadState.append.endOfPaginationReached) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(FuseCSGOMatchesTheme.dimen.mediumPadding),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                stringResource(id = R.string.no_matches_found),
+                                color = FuseCSGOMatchesTheme.colorScheme.onBackground,
+                                fontSize = 18.sp,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    } else {
+                        MainScreenContent(
+                            matches = matchesLazyItems,
+                            onIntent = mainViewModel::reduce
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun MainScreenContent(
+    modifier: Modifier = Modifier,
+    matches: LazyPagingItems<MatchDto>,
+    onIntent: ((MainIntent) -> Unit)? = null,
+) {
+    val density = LocalDensity.current
+    val windowInfo = LocalWindowInfo.current
+    val screenWidthPx = windowInfo.containerSize.width
+    val screenWidthDp = with(density) { screenWidthPx.toDp() }
+
+    val columns = when {
+        screenWidthDp >= 840.dp -> GridCells.Fixed(3)
+        screenWidthDp >= 600.dp -> GridCells.Fixed(2)
+        else -> GridCells.Fixed(1)
+    }
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(
+                top = FuseCSGOMatchesTheme.dimen.mediumLargePadding,
+                start = FuseCSGOMatchesTheme.dimen.mediumLargePadding,
+                end = FuseCSGOMatchesTheme.dimen.mediumLargePadding,
+                bottom = FuseCSGOMatchesTheme.dimen.noPadding
+            )
+    ) {
+        Text(
+            text = stringResource(id = R.string.matches_title),
+            color = Color.White,
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(
+                start = FuseCSGOMatchesTheme.dimen.mediumPadding,
+                top = FuseCSGOMatchesTheme.dimen.mediumLargePadding,
+                bottom = FuseCSGOMatchesTheme.dimen.mediumPadding
+            )
+        )
+        LazyVerticalGrid(
+            modifier = Modifier.fillMaxSize(),
+            columns = columns,
+            contentPadding = PaddingValues(bottom = FuseCSGOMatchesTheme.dimen.mediumPadding),
+            verticalArrangement = Arrangement.spacedBy(FuseCSGOMatchesTheme.dimen.cardsPadding),
+            horizontalArrangement = Arrangement.spacedBy(FuseCSGOMatchesTheme.dimen.cardsPadding)
+        ) {
+            items(
+                count = matches.itemCount,
+                key = matches.itemKey { it.id ?: 0 }
+            ) { index ->
+                val match = matches[index]
+                if (match != null) {
+                    MatchCard(match = match, onIntent = onIntent)
+                }
+            }
+
+            item {
+                when (matches.loadState.append) {
+                    is LoadState.Loading -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = FuseCSGOMatchesTheme.dimen.mediumPadding),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = FuseCSGOMatchesTheme.colorScheme.tertiary)
+                        }
+                    }
+
+                    is LoadState.Error -> {
+                        val error = (matches.loadState.append as LoadState.Error).error
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(FuseCSGOMatchesTheme.dimen.mediumPadding),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Icon(
+                                    imageVector = Icons.Filled.ErrorOutline,
+                                    contentDescription = null,
+                                    tint = FuseCSGOMatchesTheme.colorScheme.onError,
+                                    modifier = Modifier.size(FuseCSGOMatchesTheme.dimen.bigLargePadding)
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = error.localizedMessage
+                                        ?: stringResource(id = R.string.error_loading_matches),
+                                    color = FuseCSGOMatchesTheme.colorScheme.onError,
+                                    textAlign = TextAlign.Center,
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                                Spacer(modifier = Modifier.height(FuseCSGOMatchesTheme.dimen.mediumPadding))
+                                Button(
+                                    onClick = { matches.retry() },
+                                    colors = ButtonDefaults.buttonColors(containerColor = FuseCSGOMatchesTheme.colorScheme.error)
+                                ) {
+                                    Text(stringResource(id = R.string.retry))
+                                }
+                            }
+                        }
+                    }
+
+                    is LoadState.NotLoading -> {
+                        if (matches.loadState.append.endOfPaginationReached && matches.itemCount > 0) {
+                            Log.i(tag, "Stopped loading")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+private fun MainScreenContentPreview(
+    modifier: Modifier = Modifier,
+    matches: List<MatchDto>,
+    onIntent: ((MainIntent) -> Unit)? = null,
+) {
+    val density = LocalDensity.current
+    val windowInfo = LocalWindowInfo.current
+    val screenWidthPx = windowInfo.containerSize.width
+    val screenWidthDp = with(density) { screenWidthPx.toDp() }
+
+    val columns = when {
+        screenWidthDp >= 840.dp -> GridCells.Fixed(3)
+        screenWidthDp >= 600.dp -> GridCells.Fixed(2)
+        else -> GridCells.Fixed(1)
+    }
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(FuseCSGOMatchesTheme.colorScheme.background)
+            .padding(
+                top = FuseCSGOMatchesTheme.dimen.mediumLargePadding,
+                start = FuseCSGOMatchesTheme.dimen.mediumLargePadding,
+                end = FuseCSGOMatchesTheme.dimen.mediumLargePadding,
+                bottom = FuseCSGOMatchesTheme.dimen.noPadding
+            )
+    ) {
+        Text(
+            text = stringResource(id = R.string.matches_title),
+            color = Color.White,
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(
+                start = FuseCSGOMatchesTheme.dimen.mediumPadding,
+                top = FuseCSGOMatchesTheme.dimen.mediumLargePadding,
+                bottom = FuseCSGOMatchesTheme.dimen.mediumPadding
+            )
+        )
+        LazyVerticalGrid(
+            modifier = Modifier.fillMaxSize(),
+            columns = columns,
+            contentPadding = PaddingValues(bottom = FuseCSGOMatchesTheme.dimen.mediumPadding),
+            verticalArrangement = Arrangement.spacedBy(FuseCSGOMatchesTheme.dimen.cardsPadding),
+            horizontalArrangement = Arrangement.spacedBy(FuseCSGOMatchesTheme.dimen.cardsPadding)
+        ) {
+            items(items = matches, key = { it.id ?: 0 }) { match ->
+                MatchCard(match = match, onIntent = onIntent)
+            }
+        }
+    }
+}
+
+@Composable
+fun MatchCard(match: MatchDto, onIntent: ((MainIntent) -> Unit)? = null) {
+    Card(
+        modifier = Modifier
+            .width(312.dp)
+            .sizeIn(maxWidth = 312.dp)
+            .aspectRatio(16f / 9f)
+            .clickable(enabled = onIntent != null) {
+                onIntent?.invoke(MainIntent.OnMatchClicked(match.id ?: 0))
+            },
+        colors = CardDefaults.cardColors()
+            .copy(containerColor = FuseCSGOMatchesTheme.colorScheme.surfaceContainerHighest),
+        shape = RoundedCornerShape(FuseCSGOMatchesTheme.dimen.mediumPadding),
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            if (match.live?.supported == true && match.status == MatchStatus.IN_PROGRESS) {
+                NowBadge(modifier = Modifier.align(Alignment.TopEnd))
+            }
+            if (match.status == MatchStatus.SCHEDULED) {
+                val scheduledDate = formatScheduledAt(match.scheduledAt)
+                ScheduledBadge(modifier = Modifier.align(Alignment.TopEnd), text = scheduledDate)
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 25.dp, bottom = FuseCSGOMatchesTheme.dimen.largePadding)
+                    .height(119.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                val team1 = match.opponents?.getOrNull(0)?.opponent
+                val team2 = match.opponents?.getOrNull(1)?.opponent
+
+                val team1Name = team1?.name?.takeIf { it.isNotBlank() }
+                    ?: match.name?.substringBefore(" vs ")?.trim()
+                    ?: stringResource(id = R.string.team_1)
+                val team2Name = team2?.name?.takeIf { it.isNotBlank() }
+                    ?: match.name?.substringAfter(
+                        " vs ",
+                        missingDelimiterValue = stringResource(id = R.string.team_2)
+                    )?.trim()
+                    ?: stringResource(id = R.string.team_2)
+
+                val team1ImageUrl = team1?.imageUrl
+                val team2ImageUrl = team2?.imageUrl
+                TeamDisplay(
+                    modifier = Modifier
+                        .padding(end = 20.dp),
+                    name = team1Name,
+                    imageUrl = team1ImageUrl,
+                )
+
+                Text(
+                    modifier = Modifier
+                        .width(13.dp)
+                        .height(14.dp)
+                        .align(Alignment.CenterVertically),
+                    text = stringResource(id = R.string.vs),
+                    style = FuseCSGOMatchesTheme.typography.textStyleVs
+                )
+
+                TeamDisplay(
+                    name = team2Name,
+                    imageUrl = team2ImageUrl,
+                    modifier = Modifier
+                        .padding(start = 20.dp),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun formatScheduledAt(
+    scheduledAtInstant: Instant?,
+    locale: Locale = Locale.getDefault()
+): String {
+    if (scheduledAtInstant == null) {
+        return stringResource(id = R.string.not_available_short)
+    }
+
+    val systemZoneId = ZoneId.systemDefault()
+    val now = Instant.now()
+
+    val scheduledZonedDateTime = ZonedDateTime.ofInstant(scheduledAtInstant, systemZoneId)
+    val nowZonedDateTime = ZonedDateTime.ofInstant(now, systemZoneId)
+
+    val scheduledDate = scheduledZonedDateTime.toLocalDate()
+    val nowDate = nowZonedDateTime.toLocalDate()
+
+    val timeFormatter = remember(locale) { DateTimeFormatter.ofPattern("HH:mm", locale) }
+    val timeString = scheduledZonedDateTime.format(timeFormatter)
+
+    return when {
+        scheduledDate.isEqual(nowDate) -> {
+            stringResource(R.string.scheduled_today, timeString)
+        }
+
+        isSameWeek(scheduledDate, nowDate, locale) -> {
+            var dayOfWeekString = scheduledZonedDateTime.dayOfWeek.getDisplayName(
+                java.time.format.TextStyle.SHORT,
+                locale
+            )
+                .replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }
+            if (dayOfWeekString.endsWith(".")) {
+                dayOfWeekString = dayOfWeekString.dropLast(1)
+            }
+            "$dayOfWeekString, $timeString"
+        }
+
+        else -> {
+            val dateFormatter = remember(locale) { DateTimeFormatter.ofPattern("dd.MM", locale) }
+            "${scheduledDate.format(dateFormatter)} $timeString"
+        }
+    }
+}
+
+private fun isSameWeek(startDate: LocalDate, endDate: LocalDate, locale: Locale): Boolean {
+    if (startDate.year != endDate.year) {
+        return false
+    }
+    val weekFields = WeekFields.of(locale)
+    return startDate.get(weekFields.weekOfYear()) == endDate.get(weekFields.weekOfYear()) &&
+            abs(ChronoUnit.DAYS.between(startDate, endDate)) < 7
+}
+
+@Composable
+fun NowBadge(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .sizeIn(minWidth = 43.dp)
+            .height(25.dp)
+            .wrapContentWidth()
+            .clip(FuseCSGOMatchesTheme.shapes.agora)
+            .background(FuseCSGOMatchesTheme.colorScheme.errorContainer)
+            .padding(horizontal = FuseCSGOMatchesTheme.dimen.smallMediumPadding, vertical = 6.dp)
+    ) {
+        Text(
+            modifier = Modifier
+                .wrapContentSize()
+                .padding(top = 2.dp),
+            text = stringResource(R.string.now),
+            style = FuseCSGOMatchesTheme.typography.textStyleNow,
+        )
+    }
+}
+
+@Preview
+@Composable
+fun NowBadgePreview() {
+    FuseCSGOMatchesThemeContent {
+        Surface(modifier = Modifier.padding(8.dp)) {
+            NowBadge()
+        }
+    }
+}
+
+@Composable
+fun ScheduledBadge(text: String, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .sizeIn(minWidth = 43.dp)
+            .height(25.dp)
+            .wrapContentWidth()
+            .clip(FuseCSGOMatchesTheme.shapes.agora)
+            .background(FuseCSGOMatchesTheme.colorScheme.errorContainer)
+            .padding(horizontal = FuseCSGOMatchesTheme.dimen.smallMediumPadding, vertical = 6.dp)
+    ) {
+        Text(
+            text = text,
+            style = FuseCSGOMatchesTheme.typography.textStyleNow,
+        )
+    }
+}
+
+@Preview
+@Composable
+fun ScheduledBadgePreview() {
+    FuseCSGOMatchesThemeContent {
+        Surface(modifier = Modifier.padding(8.dp)) {
+            val formattedText = formatScheduledAt(Instant.now())
+            ScheduledBadge(text = formattedText)
+        }
+    }
+}
+
+@Composable
+fun TeamDisplay(
+    name: String,
+    imageUrl: Uri?,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.padding(vertical = FuseCSGOMatchesTheme.dimen.extraSmallPadding),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        val errorPainter = rememberVectorPainter(image = Icons.Outlined.BrokenImage)
+        val placeholderCircleColor = Color(0xFFC4C4C4)
+
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(imageUrl)
+                .crossfade(true)
+                .build(),
+            placeholder = ColorPainter(placeholderCircleColor),
+            error = errorPainter,
+            contentDescription = stringResource(R.string.team_logo_desc, name),
+            contentScale = ContentScale.Fit,
+            modifier = Modifier
+                .size(60.dp.scaled())
+                .clip(CircleShape)
+                .background(FuseCSGOMatchesTheme.colorScheme.surfaceContainer.copy(alpha = 0.5f))
+        )
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(
+            text = name,
+            color = Color.White,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+            textAlign = TextAlign.Center,
+            maxLines = 3,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+class SampleMatchDtoProvider : PreviewParameterProvider<MatchDto> {
+    override val values = sequenceOf(
+        createSampleMatchDto(
+            id = 1,
+            name = "Team Alpha vs Team Bravo",
+            status = MatchStatus.ENDED,
+            beginAt = Instant.now().minusSeconds(3600),
+            team1Score = 2,
+            team2Score = 1,
+            isLive = false
+        )
+    )
+}
+
+@Preview(showBackground = true, device = Devices.PIXEL_4)
+@Composable
+fun MatchCardPreview(@PreviewParameter(SampleMatchDtoProvider::class) match: MatchDto) {
+    FuseCSGOMatchesThemeContent {
+        //Surface(color = DarkBackground) {
+        Surface {
+            MatchCard(match = match)
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TeamDisplayPreview() {
+    FuseCSGOMatchesThemeContent {
+        Surface(color = FuseCSGOMatchesTheme.colorScheme.surfaceContainer) {
+            Row(Modifier.padding(FuseCSGOMatchesTheme.dimen.mediumPadding)) {
+                TeamDisplay(
+                    name = "Team Alpha",
+                    imageUrl = "https://cdn.pandascore.co/images/team/image/126709/9999_big.png".toUri(),
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(Modifier.width(FuseCSGOMatchesTheme.dimen.mediumPadding))
+                TeamDisplay(
+                    name = "Team Bravo With A Very Long Name",
+                    imageUrl = null,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+    }
+}
+
+private fun createSampleMatchDto(
+    id: Long,
+    name: String,
+    status: MatchStatus = MatchStatus.UNKNOWN,
+    beginAt: Instant?,
+    numberOfGames: Int = 3,
+    leagueName: String = "ESL Pro League",
+    team1Name: String = "Team Alpha",
+    team1ImageUrl: String? = "https://via.placeholder.com/150/FF0000/FFFFFF?Text=A",
+    team2Name: String = "Team Bravo",
+    team2ImageUrl: String? = "https://via.placeholder.com/150/0000FF/FFFFFF?Text=B",
+    team1Score: Int = 0,
+    team2Score: Int = 0,
+    isLive: Boolean = false
+): MatchDto {
+    val team1Id = id * 100 + 1
+    val team2Id = id * 100 + 2
+    return MatchDto(
+        id = id,
+        name = name,
+        beginAt = beginAt,
+        scheduledAt = if (beginAt == null && status == MatchStatus.SCHEDULED) Instant.now()
+            .plusSeconds(3600) else beginAt,
+        endAt = if (status == MatchStatus.ENDED) beginAt?.plusSeconds(3600 * 2) else null,
+        forfeit = false,
+        leagueId = id * 10,
+        league = LeagueDto(
+            id = id * 10,
+            imageUrl = team1ImageUrl?.toUri(), // Placeholder
+            name = leagueName,
+            slug = leagueName.lowercase().replace(" ", "-"),
+            url = null,
+            modifiedAt = Instant.now()
+        ),
+        live = LiveDto(
+            opensAt = null,
+            supported = isLive,
+            url = if (isLive) "https://twitch.tv/example" else null
+        ),
+        matchType = "best_of",
+        modifiedAt = Instant.now().minusSeconds(600),
+        numberOfGames = numberOfGames,
+        opponents = listOf(
+            OpponentWrapperDto(
+                opponent = OpponentDetailsDto(
+                    id = team1Id,
+                    imageUrl = team1ImageUrl?.toUri(),
+                    name = team1Name,
+                    slug = team1Name.lowercase().replace(" ", "-"),
+                    acronym = team1Name.take(3).uppercase()
+                ), type = "team"
+            ),
+            OpponentWrapperDto(
+                opponent = OpponentDetailsDto(
+                    id = team2Id,
+                    imageUrl = team2ImageUrl?.toUri(),
+                    name = team2Name,
+                    slug = team2Name.lowercase().replace(" ", "-"),
+                    acronym = team2Name.take(3).uppercase()
+                ), type = "team"
+            )
+        ),
+        originalScheduledAt = beginAt?.minusSeconds(if (status == MatchStatus.SCHEDULED) 7200 else 0),
+        results = listOf(
+            ResultDto(score = team1Score, teamId = team1Id),
+            ResultDto(score = team2Score, teamId = team2Id)
+        ),
+        serieId = id * 1000,
+        serie = SerieDto(
+            beginAt = beginAt?.minusSeconds(86400),
+            endAt = beginAt?.plusSeconds(86400 * 5),
+            fullName = "$leagueName Season ${id % 5 + 1}",
+            id = id * 1000,
+            leagueId = id * 10,
+            modifiedAt = Instant.now(),
+            name = "Season ${id % 5 + 1}",
+            season = "${2023 + id % 3}",
+            slug = "season-${id % 5 + 1}",
+            winnerId = null,
+            winnerType = null,
+            year = (2023 + id % 3).toInt()
+        ),
+        slug = name.lowercase().replace(" ", "-") + "-${id}",
+        status = status,
+        streamsList = if (isLive) listOf() else emptyList(),
+        tournamentId = id * 10000,
+        tournament = TournamentDto(
+            beginAt = beginAt?.minusSeconds(86400 * 2),
+            endAt = beginAt?.plusSeconds(86400 * 7),
+            id = id * 10000,
+            leagueId = id * 10,
+            modifiedAt = Instant.now(),
+            name = "Main Event",
+            prizepool = "100,000 USD",
+            serieId = id * 1000,
+            slug = "main-event-${id}",
+            tier = "a",
+            winnerId = null,
+            winnerType = null,
+            country = "INT",
+            detailedStats = true,
+            hasBracket = true,
+            liveSupported = isLive,
+            region = "EU",
+            type = "Online"
+        ),
+        videogame = VideogameDto(id = 1, name = "CS:GO", slug = "csgo"),
+        videogameTitle = null,
+        winnerId = if (status == MatchStatus.ENDED && team1Score > team2Score) team1Id else if (status == MatchStatus.ENDED && team2Score > team1Score) team2Id else null,
+        winnerType = if (status == MatchStatus.ENDED) "Team" else null,
+        games = List(numberOfGames) { gameIndex ->
+            val gameFinished =
+                status == MatchStatus.ENDED && (gameIndex < team1Score || gameIndex < team2Score)
+            val gameWinnerId =
+                if (gameFinished) (if (gameIndex < team1Score) team1Id else team2Id) else null
+            GameDto(
+                beginAt = beginAt?.plusSeconds(3600L * gameIndex),
+                complete = gameFinished,
+                detailedStats = true,
+                endAt = if (gameFinished) beginAt?.plusSeconds(3600L * gameIndex + 2700) else null,
+                finished = gameFinished,
+                forfeit = false,
+                id = id * 100000 + gameIndex,
+                length = if (gameFinished) 45 else null,
+                matchId = id,
+                position = gameIndex + 1,
+                status = if (gameFinished) MatchStatus.ENDED else if (gameIndex == 0 && status == MatchStatus.IN_PROGRESS) MatchStatus.IN_PROGRESS else MatchStatus.SCHEDULED,
+                winner = WinnerDto(
+                    id = gameWinnerId,
+                    type = "Team"
+                ),
+                winnerType = "Team"
+            )
+        },
+        draw = false,
+        detailedStats = true,
+        winner = if (status == MatchStatus.ENDED && team1Score > team2Score) WinnerDto(
+            id = team1Id,
+            type = "Team"
+        )
+        else if (status == MatchStatus.ENDED && team2Score > team1Score) WinnerDto(
+            id = team2Id,
+            type = "Team"
+        )
+        else null,
+        videogameVersion = null,
+        rescheduled = false,
+        gameAdvantage = null
+    )
+}
+
+private fun sampleMatchesForPreview(count: Int): List<MatchDto> {
+    return List(count) { index ->
+        createSampleMatchDto(
+            id = index.toLong() + 1,
+            name = "Match ${index + 1}: Team ${'A' + index % 3} vs Team ${'X' + index % 4}",
+            status = when (index % 5) {
+                0 -> MatchStatus.IN_PROGRESS
+                1 -> MatchStatus.ENDED
+                2 -> MatchStatus.SCHEDULED
+                3 -> MatchStatus.SCHEDULED
+                else -> MatchStatus.ENDED
+            },
+            beginAt = Instant.now().minusSeconds((index * 3600).toLong()),
+            isLive = (index % 5 == 0),
+            team1Score = if (index % 5 == 1 && index % 2 == 0) 2 else if (index % 5 == 1) 1 else 0,
+            team2Score = if (index % 5 == 1 && index % 2 != 0) 2 else if (index % 5 == 1) 0 else 0
+        )
+    }
+}
+
+@Preview(
+    name = "MainScreenContent Phone - Data",
+    showBackground = true,
+    device = Devices.PHONE
+)
+@Composable
+private fun MainScreenContentPreviewPhoneWithData() {
+    FuseCSGOMatchesThemeContent {
+        val sampleMatches = sampleMatchesForPreview(10)
+        MainScreenContentPreview(
+            matches = sampleMatches,
+            onIntent = {}
+        )
+    }
+}
+
+@Preview(
+    name = "MainScreenContent Foldable - Data",
+    showBackground = true,
+    device = Devices.FOLDABLE
+)
+@Composable
+private fun MainScreenContentPreviewFoldableWithData() {
+    FuseCSGOMatchesThemeContent {
+        val sampleMatches = sampleMatchesForPreview(15)
+        MainScreenContentPreview(
+            matches = sampleMatches,
+            onIntent = {}
+        )
+    }
+}
+
+@Preview(
+    name = "MainScreenContent Tablet - Data",
+    showBackground = true,
+    device = Devices.TABLET
+)
+@Composable
+private fun MainScreenContentPreviewTabletWithData() {
+    FuseCSGOMatchesThemeContent {
+        val sampleMatches = sampleMatchesForPreview(20) // More items for tablet
+        MainScreenContentPreview(
+            matches = sampleMatches,
+            onIntent = {}
+        )
+    }
+}

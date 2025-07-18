@@ -1,3 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="error_loading_matches">Error loading matches</string>
+    <string name="failed_to_load_matches">Failed to load matches. Please try again.</string>
+    <string name="retry">Retry</string>
+    <string name="no_matches_found">No matches found</string>
+    <string name="matches_title">Matches</string>
+    <string name="error_loading_more_matches">Error loading more matches</string>
+    <string name="end_of_list">End of list</string>
+    <string name="unknown_league">Unknown League</string>
+    <string name="not_available_short">N/A</string>
+    <string name="team_1">Team 1</string>
+    <string name="team_2">Team 2</string>
+    <string name="vs">VS</string>
+    <string name="live_badge">LIVE</string>
+    <string name="team_logo_desc">Logo of %1$s</string>
+    <string name="now">NOW</string>
+    <string name="scheduled_today">Today, %1$s</string>
 </resources>

@@ -72,6 +72,7 @@ dependencies {
     //Retrofit 2
     implementation(libs.com.squareup.retrofit2.retrofit)
     implementation(libs.com.squareup.retrofit2.converter.moshi)
+    implementation(libs.com.squareup.retrofit2.converter.gson)
 
     //Lifecycle
     implementation(libs.ax.lifecycle.runtime.ktx)
