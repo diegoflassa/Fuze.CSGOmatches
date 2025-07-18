@@ -1,78 +1,53 @@
 package dev.diegoflassa.fusecsgomatches.core.theme
 
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 
-val LocalFuseCSGOMatchesShapes = staticCompositionLocalOf { fusecsgomatchesShapes() }
+val LocalFuseCSGOMatchesShapes = staticCompositionLocalOf { FuseCSGOMatchesShapes() }
 
-data class fusecsgomatchesShapes(
-    val bottomBarShape: Shape = BottomBarShape(),
+data class FuseCSGOMatchesShapes(
+    val agora: Shape = AgoraTagShape(),
 )
 
-private class BottomBarShape() : Shape {
+class AgoraTagShape(
+    private val bottomLeftCornerRadiusDp: Dp = 16.dp // Only bottom-left has a radius
+) : Shape {
     override fun createOutline(
         size: Size,
         layoutDirection: LayoutDirection,
         density: Density
     ): Outline {
-        val path = Path()
+        return Outline.Generic(Path().apply {
+            val bottomLeftRadiusPx = with(density) { bottomLeftCornerRadiusDp.toPx() }
 
-        val originalDesignWidth = 360f
-        val originalDesignHeight = 55.7f
+            moveTo(0f, 0f)
 
-        // Calculate scaling factors for X and Y directions.
-        // This ensures the path scales proportionally to fit the provided 'size'.
-        val scaleX = size.width / originalDesignWidth
-        val scaleY = size.height / originalDesignHeight
+            lineTo(size.width, 0f)
 
-        // Apply the SVG path commands, scaling each coordinate.
-        // M0,0.02
-        path.moveTo(0f * scaleX, 0.02f * scaleY)
+            lineTo(size.width, size.height)
 
-        // H131.79
-        path.lineTo(131.79f * scaleX, 0.02f * scaleY)
-
-        // C140.18,-0.08 147.96,-0.39 149.52,14.88
-        path.cubicTo(
-            140.18f * scaleX, -0.08f * scaleY, // Control point 1
-            147.96f * scaleX, -0.39f * scaleY, // Control point 2
-            149.52f * scaleX, 14.88f * scaleY  // End point
-        )
-
-        // C154.08,47.7 201.98,51.73 211,15.92
-        path.cubicTo(
-            154.08f * scaleX, 47.7f * scaleY,   // Control point 1
-            201.98f * scaleX, 51.73f * scaleY,  // Control point 2
-            211f * scaleX, 15.92f * scaleY      // End point
-        )
-
-        // C214.45,2.22 212.56,-0.08 228.84,0.02
-        path.cubicTo(
-            214.45f * scaleX, 2.22f * scaleY,   // Control point 1
-            212.56f * scaleX, -0.08f * scaleY,  // Control point 2
-            228.84f * scaleX, 0.02f * scaleY    // End point
-        )
-
-        // H360
-        path.lineTo(360f * scaleX, 0.02f * scaleY)
-
-        // V55.7
-        path.lineTo(360f * scaleX, 55.7f * scaleY)
-
-        // H0
-        path.lineTo(0f * scaleX, 55.7f * scaleY)
-
-        // V0.02
-        path.lineTo(0f * scaleX, 0.02f * scaleY)
-
-        // Z (Close the path)
-        path.close()
-
-        return Outline.Generic(path)
+            lineTo(bottomLeftRadiusPx, size.height)
+            arcTo(
+                rect = Rect(
+                    left = 0f,
+                    top = size.height - bottomLeftRadiusPx * 2,
+                    right = bottomLeftRadiusPx * 2,
+                    bottom = size.height
+                ),
+                startAngleDegrees = 90f,
+                sweepAngleDegrees = 90f,
+                forceMoveTo = false
+            )
+            close()
+        })
     }
 }

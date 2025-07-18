@@ -24,30 +24,17 @@ object FuseCSGOMatchesTheme {
     val typography: FuseCSGOMatchesTypography
         @Composable @ReadOnlyComposable get() = LocalFuseCSGOMatchesTypography.current
 
-    val shapes: fusecsgomatchesShapes
+    val shapes: FuseCSGOMatchesShapes
         @Composable @ReadOnlyComposable get() = LocalFuseCSGOMatchesShapes.current
 
-    val dimen: fusecsgomatchesDimen
+    val dimen: FuseCSGOMatchesDimen
         @Composable @ReadOnlyComposable get() = LocalFuseCSGOMatchesDimen.current
 }
 
 @Composable
-fun FuseCSGOMatchesThemeContent(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    //dynamicColor: Boolean = true,
-    content: @Composable () -> Unit
-) {
+fun FuseCSGOMatchesThemeContent(content: @Composable () -> Unit) {
     val typography: Typography = LocalFuseCSGOMatchesTypography.current.typography
-    val colorScheme = when {
-        //dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-        //    val context = LocalContext.current
-        //    if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        //}
-
-        darkTheme -> fuseCSGOMatchesColorScheme
-        else -> fuseCSGOMatchesColorScheme
-    }
+    val colorScheme = fuseCSGOMatchesColorScheme
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
@@ -61,13 +48,13 @@ fun FuseCSGOMatchesThemeContent(
                 window.statusBarColor = colorScheme.primary.toArgb()
             }
 
-            insetsController.isAppearanceLightStatusBars = !darkTheme
+            insetsController.isAppearanceLightStatusBars = false
 
             if (Build.VERSION.SDK_INT < 35) {
                 @Suppress("DEPRECATION")
                 window.navigationBarColor = colorScheme.surface.toArgb()
             }
-            insetsController.isAppearanceLightNavigationBars = !darkTheme
+            insetsController.isAppearanceLightNavigationBars = false
         }
     }
 

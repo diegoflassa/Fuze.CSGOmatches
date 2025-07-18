@@ -17,9 +17,12 @@ kotlin {
 }
 
 dependencies {
-    //Common
+    //Unit tests
+    testImplementation(libs.junit)
 
-    //Common Testing
+    //Instrumented Tests
+    androidTestImplementation(libs.ax.test.ext.junit.ktx)
+    androidTestImplementation(libs.ax.test.expresso.core)
 
     //Compose
     implementation(platform(libs.ax.compose.bom))
@@ -43,6 +46,13 @@ dependencies {
     implementation(libs.ax.navigation3.runtime)
     implementation(libs.ax.navigation3.ui)
 
+    //Dagger & Hilt
+    implementation(libs.ax.hilt.common)
+    implementation(libs.com.google.dagger.hilt.android)
+    implementation(libs.ax.hilt.navigation.compose)
+    ksp(libs.com.google.dagger.hilt.android.compiler)
+    ksp(libs.ax.hilt.compiler)
+
     //OkHttp
     implementation(platform(libs.com.squareup.okhttp3.bom))
     implementation(libs.com.squareup.okhttp3)
@@ -55,6 +65,7 @@ dependencies {
     //Retrofit 2
     implementation(libs.com.squareup.retrofit2.retrofit)
     implementation(libs.com.squareup.retrofit2.converter.moshi)
+    implementation(libs.com.squareup.retrofit2.converter.gson)
 
     //Splashscreen
     implementation(libs.ax.core.splashscreen)

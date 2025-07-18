@@ -4,23 +4,21 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-val LocalFuseCSGOMatchesDimen = staticCompositionLocalOf { fusecsgomatchesDimen() }
+val LocalFuseCSGOMatchesDimen = staticCompositionLocalOf { FuseCSGOMatchesDimen() }
 
-data class fusecsgomatchesDimen(
+data class FuseCSGOMatchesDimen(
+    //Common paddings
     val noPadding: Dp = 0.dp,
-    val appBarVerticalPadding: Dp = 17.dp,
-    val appBarHorizontalPadding: Dp = 17.dp,
-    val searchTopPadding: Dp = 23.dp,
-    val searchBottomPadding: Dp = 30.dp,
-    val searchHorizontalPadding: Dp = 20.dp,
-    val tabHorizontalPadding: Dp = 20.dp,
-    val tabIndicatorHeight: Dp = 3.dp,
-    val inputHeight: Dp = 40.dp,
-    val iconSettings: Dp = 24.dp,
-    val iconSize: Dp = 18.dp,
-    val fabDiameter: Dp = 48.dp,
-    val fabIconSize: Dp = 22.dp,
-    val bottomBarHeight: Dp = 50.dp,
-    val bottomAppBarIconSize: Dp = 20.dp,
-    val topAppBarHeight: Dp = 62.dp
+    val extraSmallPadding: Dp = 4.dp,
+    val smallPadding: Dp = 8.dp,
+    val smallMediumPadding: Dp = 12.dp,
+    val mediumPadding: Dp = 16.dp,
+    val mediumLargePadding: Dp = 24.dp,
+    val largePadding: Dp = 32.dp,
+    val bigLargePadding: Dp = 48.dp,
+    val extraLargePadding: Dp = 64.dp,
+    val extraBigLargePadding: Dp = 76.dp,
+
+    //Specific paddings
+    val cardsPadding: Dp = 23.dp,
 )

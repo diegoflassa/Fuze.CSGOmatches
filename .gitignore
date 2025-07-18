@@ -3,7 +3,6 @@
 /.idea
 /.kotlin
 /build
-firebase_app_distribution.properties
 local.properties
 keystore.jks
 keystore.properties

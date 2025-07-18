@@ -9,12 +9,19 @@ plugins {
 }
 
 android {
-    namespace = "dev.diegoflassa.fusecsgomatches.home"
+    namespace = "dev.diegoflassa.fusecsgomatches.details"
 }
 
 dependencies {
     //Módulos
     implementation(project(":feature-core"))
+
+    //Unit tests
+    testImplementation(libs.junit)
+
+    //Instrumented Tests
+    androidTestImplementation(libs.ax.test.ext.junit.ktx)
+    androidTestImplementation(libs.ax.test.expresso.core)
 
     //Compose
     implementation(platform(libs.ax.compose.bom))
@@ -34,11 +41,22 @@ dependencies {
     implementation(libs.ax.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
 
+    //Paging
+    implementation(libs.ax.paging.runtime.ktx)
+    implementation(libs.ax.paging.compose)
+
     //Compose Navigation 3
     implementation(libs.ax.navigation3.runtime)
     implementation(libs.ax.navigation3.ui)
     implementation(libs.ax.navigation3.viewmodel)
     //implementation(libs.ax.navigation3.adaptive)
+
+    //Dagger & Hilt
+    implementation(libs.ax.hilt.common)
+    implementation(libs.com.google.dagger.hilt.android)
+    implementation(libs.ax.hilt.navigation.compose)
+    ksp(libs.com.google.dagger.hilt.android.compiler)
+    ksp(libs.ax.hilt.compiler)
 
     //OkHttp
     implementation(platform(libs.com.squareup.okhttp3.bom))
@@ -52,6 +70,7 @@ dependencies {
     //Retrofit 2
     implementation(libs.com.squareup.retrofit2.retrofit)
     implementation(libs.com.squareup.retrofit2.converter.moshi)
+    implementation(libs.com.squareup.retrofit2.converter.gson)
 
     //Splashscreen
     implementation(libs.ax.core.splashscreen)

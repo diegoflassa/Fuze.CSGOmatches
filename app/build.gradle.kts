@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.hilt.android.gradle.plugin)
 }
 
 kotlin {
@@ -20,6 +21,13 @@ dependencies {
     // Common
     implementation(libs.ax.core.ktx)
     implementation(libs.com.google.android.material)
+
+    //Unit tests
+    testImplementation(libs.junit)
+
+    //Instrumented Tests
+    androidTestImplementation(libs.ax.test.ext.junit.ktx)
+    androidTestImplementation(libs.ax.test.expresso.core)
 
     //Compose
     implementation(platform(libs.ax.compose.bom))
@@ -45,7 +53,14 @@ dependencies {
     implementation(libs.ax.navigation3.viewmodel)
     //implementation(libs.ax.navigation3.adaptive)
 
-     //OkHttp
+    //Dagger & Hilt
+    implementation(libs.ax.hilt.common)
+    implementation(libs.com.google.dagger.hilt.android)
+    implementation(libs.ax.hilt.navigation.compose)
+    ksp(libs.com.google.dagger.hilt.android.compiler)
+    ksp(libs.ax.hilt.compiler)
+
+    //OkHttp
     implementation(platform(libs.com.squareup.okhttp3.bom))
     implementation(libs.com.squareup.okhttp3)
     implementation(libs.com.squareup.okhttp3.logging.interceptor)
@@ -57,6 +72,7 @@ dependencies {
     //Retrofit 2
     implementation(libs.com.squareup.retrofit2.retrofit)
     implementation(libs.com.squareup.retrofit2.converter.moshi)
+    implementation(libs.com.squareup.retrofit2.converter.gson)
 
     //Lifecycle
     implementation(libs.ax.lifecycle.runtime.ktx)
@@ -68,9 +84,6 @@ dependencies {
 
     //Splashscreen
     implementation(libs.ax.core.splashscreen)
-
-    //Startup
-    implementation(libs.ax.startup.runtime)
 
     //Other
     implementation(libs.io.coil.kt.coil.compose)
