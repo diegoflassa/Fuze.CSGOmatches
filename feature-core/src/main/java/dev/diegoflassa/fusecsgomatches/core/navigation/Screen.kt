@@ -8,5 +8,10 @@ sealed interface Screen : NavKey {
     data object Main : Screen
 
     @Serializable
-    data class Details(val matchIdOrSlug: String) : Screen
+    data class Details(
+        val matchIdOrSlug: String,
+        val leagueName: String?,
+        val serieFullName: String?,
+        val scheduledAt: String?,
+    ) : Screen
 }

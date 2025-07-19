@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="back_button_description">Back</string>
-    <string name="players_title">Players</string>
     <string name="no_opponents_message">No opponents found for this match.</string>
     <string name="error_loading_matches">Error loading match details.</string>
     <string name="no_matches_found">Match details not found.</string>
@@ -11,8 +10,10 @@
     <string name="vs">vs</string>
     <string name="player_image_desc">Image of player %1$s</string>
     <string name="team_logo_desc">Logo of %1$s</string>
-    <string name="details_screen_opponents_title">Opponent Details</string>
     <string name="unknown_player_real_name">Unknown</string>
     <string name="details_screen_no_players_in_team_message">No players found for this team.</string>
     <string name="retry">Retry</string>
+    <string name="alert">Alert</string>
+    <string name="no_team_data_to_display">No team data to display</string>
+    <string name="not_available_short">N/A</string>
 </resources>

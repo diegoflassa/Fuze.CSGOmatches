@@ -1,22 +1,22 @@
 package dev.diegoflassa.fusecsgomatches.core.data.enums
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import java.util.Locale.getDefault
 
+@Serializable
 enum class MatchStatus() {
     UNKNOWN,
+    @SerialName("finished")
+    FINISHED,
+    @SerialName("ended")
     ENDED,
+    @SerialName("canceled")
+    CANCELED,
+    @SerialName("in_progress")
     IN_PROGRESS,
-    SCHEDULED;
-
-    companion object {
-        fun fromString(value: String): MatchStatus {
-            val lowerCaseValue = value.lowercase(getDefault())
-            return when {
-                lowerCaseValue.contains("ended") -> ENDED
-                lowerCaseValue.contains("in progress") -> IN_PROGRESS
-                lowerCaseValue.contains("scheduled") -> SCHEDULED
-                else -> UNKNOWN
-            }
-        }
-    }
+    @SerialName("scheduled")
+    SCHEDULED,
+    @SerialName("not_started")
+    NOT_STARTED;
 }

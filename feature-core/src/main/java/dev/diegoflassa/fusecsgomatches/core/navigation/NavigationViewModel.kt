@@ -30,7 +30,7 @@ class NavigationViewModel @Inject constructor() : ViewModel() {
      *
      * @param intent The navigation intent to process.
      */
-    fun processIntent(intent: NavigationIntent) {
+    fun reduce(intent: NavigationIntent) {
         _state.update { currentState ->
             when (intent) {
                 is NavigationIntent.NavigateTo -> {
@@ -75,21 +75,35 @@ class NavigationViewModel @Inject constructor() : ViewModel() {
      * @param screen The destination screen to navigate to.
      */
     fun navigateTo(screen: Screen) {
-        processIntent(NavigationIntent.NavigateTo(screen))
+        reduce(NavigationIntent.NavigateTo(screen))
     }
 
     /**
      * Navigates to the Categories screen.
      */
     fun navigateToMain() {
-        processIntent(NavigationIntent.NavigateTo(Screen.Main))
+        reduce(NavigationIntent.NavigateTo(Screen.Main))
     }
 
     /**
      * Navigates to the Categories screen.
      */
-    fun navigateToDetails(matchIdOrSlug: String) {
-        processIntent(NavigationIntent.NavigateTo(Screen.Details(matchIdOrSlug)))
+    fun navigateToDetails(
+        matchIdOrSlug: String,
+        leagueName: String?,
+        serieFullName: String?,
+        scheduledAt: String?
+    ) {
+        reduce(
+            NavigationIntent.NavigateTo(
+                Screen.Details(
+                    matchIdOrSlug = matchIdOrSlug,
+                    leagueName = leagueName,
+                    serieFullName = serieFullName,
+                    scheduledAt = scheduledAt
+                )
+            )
+        )
     }
 
     /**
@@ -98,7 +112,7 @@ class NavigationViewModel @Inject constructor() : ViewModel() {
      * If already at the root, an effect is emitted.
      */
     fun goBack() {
-        processIntent(NavigationIntent.GoBack)
+        reduce(NavigationIntent.GoBack)
     }
 
     /**
@@ -108,6 +122,6 @@ class NavigationViewModel @Inject constructor() : ViewModel() {
      * @param screen The screen to become the new single entry in the back stack.
      */
     fun replaceAll(screen: Screen) {
-        processIntent(NavigationIntent.ReplaceAll(screen))
+        reduce(NavigationIntent.ReplaceAll(screen))
     }
 }

@@ -11,7 +11,7 @@ object FuseCSGOMatchesColors {
     val secondary = Color(0xFF272639)//Ok
     val onSecondary = Color(0xFFFFFFFF)//Ok
     val secondaryContainer = Color(0xFF272639)//Ok
-    val onSecondaryContainer = Color(0xFF161621)//Ok
+    val onSecondaryContainer = Color(0xFFFFFFFF)//Ok
     val tertiary = Color(0xFFFFFFFF)//Ok
     val onTertiary = Color(0xFF0000FF)
     val tertiaryContainer = Color(0xFFFF0000)
@@ -43,6 +43,8 @@ object FuseCSGOMatchesColors {
 
     //Specifics Colors
     val imageAbsentColor = Color(0xFFC4C4C4)//Ok
+    val colorDetailsCardName = Color(0xFF6C6B7E)//Ok
+    val transparent = Color(0x00000000)//Ok
 }
 
 

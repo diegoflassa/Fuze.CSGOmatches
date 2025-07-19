@@ -69,8 +69,6 @@ dependencies {
 
     //Retrofit 2
     implementation(libs.com.squareup.retrofit2.retrofit)
-    implementation(libs.com.squareup.retrofit2.converter.moshi)
-    implementation(libs.com.squareup.retrofit2.converter.gson)
 
     //Splashscreen
     implementation(libs.ax.core.splashscreen)

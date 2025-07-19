@@ -37,6 +37,9 @@ fun NavDisplay(modifier: Modifier, navigationViewModel: NavigationViewModel) {
             entry<Screen.Details> { navEntry ->
                 DetailsScreen(
                     matchIdOrSlug = navEntry.matchIdOrSlug,
+                    leagueName = navEntry.leagueName,
+                    serieFullName = navEntry.serieFullName,
+                    scheduledAt = navEntry.scheduledAt,
                     navigationViewModel = navigationViewModel
                 )
             }

@@ -1,20 +1,17 @@
 package dev.diegoflassa.fusecsgomatches.core.di
 
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import dev.diegoflassa.fusecsgomatches.core.data.adapters.InstantJsonAdapter
-import dev.diegoflassa.fusecsgomatches.core.data.adapters.MatchStatusJsonAdapter
-import dev.diegoflassa.fusecsgomatches.core.data.adapters.UriJsonAdapter
 import dev.diegoflassa.fusecsgomatches.core.data.config.IConfig
 import dev.diegoflassa.fusecsgomatches.core.data.network.AuthInterceptor
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -25,10 +22,7 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideAuthInterceptor(config: IConfig): AuthInterceptor {
-        // In a real app, you'd fetch this token securely.
-        // For this example, ensure you have a way to provide the actual token.
-        // If your token is in pandascore.properties, you'd load it here.
-        val token = config.pandascoreKey // Replace with actual token retrieval logic
+        val token = config.pandascoreKey
         return AuthInterceptor(token)
     }
 
@@ -50,16 +44,15 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideRetrofit(config: IConfig, okHttpClient: OkHttpClient): Retrofit {
-        val moshi = Moshi.Builder()
-            .add(UriJsonAdapter())
-            .add(InstantJsonAdapter())
-            .add(MatchStatusJsonAdapter())
-            .add(KotlinJsonAdapterFactory())
-            .build()
+        val contentType = "application/json".toMediaType()
+        val networkJson = Json {
+            ignoreUnknownKeys = true
+            isLenient = true
+        }
         return Retrofit.Builder()
             .baseUrl(config.pandascoreApi)
             .client(okHttpClient)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addConverterFactory(networkJson.asConverterFactory(contentType))
             .build()
     }
 }

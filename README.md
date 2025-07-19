@@ -14,6 +14,7 @@ Offensive (CS:GO) matches.
 ## Tech Stack & Architectural Decisions
 
 This project is built using modern Android development practices and libraries.
+Using Android Studio Narwhal | 2025.1.1 Patch 1
 
 ### Core Architecture
 
@@ -46,9 +47,7 @@ This project is built using modern Android development practices and libraries.
 * **Retrofit 3**: For type-safe HTTP client communication with a backend API.
 * **OkHttp 3**: As the underlying HTTP client for Retrofit, including a logging
   interceptor for easier debugging.
-* **Moshi**: For efficient JSON parsing (serialization/deserialization) with Kotlin support.
-* **Kotlinx Serialization**: Also included, potentially for other JSON processing tasks or
-  as an alternative.
+* **Kotlinx Serialization**: For efficient JSON parsing (serialization/deserialization).
 
 ### Asynchronous Programming
 
@@ -108,12 +107,12 @@ This project is built using modern Android development practices and libraries.
 
 ## Project Configuration Notes
 
-* **API Key (`pandascore.properties`)**: This file contains the API key for the PandaScore
+* **API Key (`app\\config.xml`)**: This file contains the API key for the PandaScore
   service. Normally, this file would be added to `.gitignore` to prevent committing
   sensitive credentials. However, for the purpose of this challenge and for convenience,
   it has been committed to the repository. In a production environment, ensure such files
   are properly gitignored and keys are managed securely (e.g., via environment
-  variables, CI secrets, or Gradle properties in `local.properties`).
+  variables, CI secrets, etc.
 
 ---
 
