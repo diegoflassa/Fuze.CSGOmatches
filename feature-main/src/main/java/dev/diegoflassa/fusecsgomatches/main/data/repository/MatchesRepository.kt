@@ -1,7 +1,7 @@
 package dev.diegoflassa.fusecsgomatches.main.data.repository
 
 import dev.diegoflassa.fusecsgomatches.main.data.network.PandaMatchesApiService
-import dev.diegoflassa.fusecsgomatches.main.data.network.dto.MatchDto
+import dev.diegoflassa.fusecsgomatches.main.data.dto.MatchDto
 import dev.diegoflassa.fusecsgomatches.main.data.repository.interfaces.IMatchesRepository
 import retrofit2.Response
 import javax.inject.Inject

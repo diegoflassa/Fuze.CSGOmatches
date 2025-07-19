@@ -1,2 +1,4 @@
 <resources>
+    <string name="attention">Atenção</string>
+    <string name="texto_dialog_deseja_sair_do_app">Deseja sair do app?</string>
 </resources>

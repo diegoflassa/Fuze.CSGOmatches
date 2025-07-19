@@ -1,18 +1,16 @@
 <resources>
     <string name="error_loading_matches">Erro ao carregar partidas</string>
-    <string name="failed_to_load_matches">Falha ao carregar partidas. Por favor, tente novamente.</string>
     <string name="retry">Tentar Novamente</string>
     <string name="no_matches_found">Nenhuma partida encontrada</string>
     <string name="matches_title">Partidas</string>
-    <string name="error_loading_more_matches">Erro ao carregar mais partidas</string>
-    <string name="end_of_list">Fim da lista</string>
-    <string name="unknown_league">Liga Desconhecida</string>
     <string name="not_available_short">N/D</string>
     <string name="team_1">Time 1</string>
     <string name="team_2">Time 2</string>
     <string name="vs">VS</string>
-    <string name="live_badge">AO VIVO</string>
     <string name="team_logo_desc">Logo de %1$s</string>
     <string name="now">AGORA</string>
     <string name="scheduled_today">Hoje, %1$s</string>
+    <string name="alert">Alerta</string>
+    <string name="please_try_to_refresh_the_page">Por favor, tente atualizar a página</string>
+    <string name="refresh">Atualizar</string>
 </resources>

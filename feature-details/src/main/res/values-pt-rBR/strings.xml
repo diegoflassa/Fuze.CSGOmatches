@@ -1,2 +1,18 @@
 <resources>
+    <string name="back_button_description">Voltar</string>
+    <string name="no_opponents_message">Nenhum oponente encontrado para esta partida.</string>
+    <string name="error_loading_matches">Erro ao carregar detalhes da partida.</string>
+    <string name="no_matches_found">Detalhes da partida não encontrados.</string>
+    <string name="league_and_series">%1$s - %2$s</string>
+    <string name="team_1">Equipe 1</string>
+    <string name="team_2">Equipe 2</string>
+    <string name="vs">vs</string>
+    <string name="player_image_desc">Imagem do jogador %1$s</string>
+    <string name="team_logo_desc">Logo de %1$s</string>
+    <string name="unknown_player_real_name">Desconhecido</string>
+    <string name="details_screen_no_players_in_team_message">Nenhum jogador encontrado para esta equipe.</string>
+    <string name="retry">Tentar Novamente</string>
+    <string name="alert">Alerta</string>
+    <string name="no_team_data_to_display">Sem informações do time para exibir</string>
+    <string name="not_available_short">N/D</string>
 </resources>

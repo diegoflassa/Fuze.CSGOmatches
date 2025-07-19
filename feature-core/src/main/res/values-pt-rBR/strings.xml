@@ -1,2 +1,16 @@
 <resources>
+    <string name="ok">OK</string>
+    <string name="sim">Sim</string>
+    <string name="sim_texto">Sim, %s</string>
+    <string name="continuar">continuar</string>
+    <string name="excluir">excluir</string>
+    <string name="nao">Não</string>
+    <string name="confirmar">Confirmar</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="permitir">Permitir</string>
+    <string name="agora_nao">Agora não</string>
+    <string name="entendido">Entendi</string>
+    <string name="voltar">Voltar</string>
+    <string name="not_available_short">N/D</string>
+    <string name="scheduled_today">Hoje, %1$s</string>
 </resources>

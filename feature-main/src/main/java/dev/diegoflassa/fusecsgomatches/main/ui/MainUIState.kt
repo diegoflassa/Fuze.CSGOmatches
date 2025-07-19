@@ -1,7 +1,7 @@
 package dev.diegoflassa.fusecsgomatches.main.ui
 
 import androidx.paging.PagingData
-import dev.diegoflassa.fusecsgomatches.main.data.network.dto.MatchDto
+import dev.diegoflassa.fusecsgomatches.main.data.dto.MatchDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 
