@@ -29,7 +29,6 @@ class MatchesPagingSource(
             val sortedMatches: List<MatchDto> = response.body()?.filter { match ->
                 val matchTime = match.beginAt ?: match.scheduledAt
                 matchTime != null && matchTime.isBefore(currentMoment).not()
-                true
             }?.filter { match ->
                 val videogameTitleName = match.videogameTitle?.name?.lowercase(Locale.getDefault())
                 videogameTitleName != null && (
