@@ -1,5 +1,3 @@
-@file:Suppress("unused", "DEPRECATION")
-
 package dev.diegoflassa.fusecsgomatches.core.extensions
 
 import androidx.compose.runtime.Composable

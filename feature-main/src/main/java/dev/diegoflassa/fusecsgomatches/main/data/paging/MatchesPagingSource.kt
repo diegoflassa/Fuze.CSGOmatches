@@ -68,8 +68,6 @@ class MatchesPagingSource(
                     pageNumber - 1
                 }
 
-                Log.d("MatchesPagingSource", "Run")
-
                 LoadResult.Page(
                     data = finalSortedMatches,
                     prevKey = prevKey,

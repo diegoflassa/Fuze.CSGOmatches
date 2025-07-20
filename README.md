@@ -27,6 +27,7 @@ This project showcases a range of modern Android development practices and featu
 
 *  This project is built using modern Android development practices and libraries.
 *  Using Android Studio Narwhal | 2025.1.1 Patch 1, and Java 21
+*  Minimum SDK Version 28
 
 ### Core Architecture
 

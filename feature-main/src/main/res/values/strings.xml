@@ -16,4 +16,5 @@
     <string name="refresh">Refresh</string>
     <string name="apply_filter_description">Apply filter</string>
     <string name="videogame_title" translatable="false">Game: %1$s</string>
+    <string name="or_try_disable_the_filter">Or, try to disable the \"Search only future events\" in the filter.</string>
 </resources>

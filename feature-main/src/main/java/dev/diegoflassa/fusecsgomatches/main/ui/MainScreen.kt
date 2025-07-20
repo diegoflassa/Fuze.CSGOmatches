@@ -344,6 +344,16 @@ fun MainScreen(
                                         .height(FuseCSGOMatchesTheme.dimen.mediumPadding)
                                         .fillMaxSize()
                                 )
+                                Text(
+                                    stringResource(id = R.string.or_try_disable_the_filter),
+                                    color = FuseCSGOMatchesTheme.colorScheme.onBackground,
+                                    style = FuseCSGOMatchesTheme.typography.textStyleNoMatchesFound,
+                                )
+                                Spacer(
+                                    modifier = Modifier
+                                        .height(FuseCSGOMatchesTheme.dimen.mediumPadding)
+                                        .fillMaxSize()
+                                )
                                 ButtonDialogText(
                                     text = stringResource(id = R.string.retry),
                                     buttonBackground = FuseCSGOMatchesTheme.colorScheme.secondaryContainer
