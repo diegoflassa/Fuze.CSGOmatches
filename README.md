@@ -7,17 +7,23 @@ Offensive (CS:GO) matches.
 
 *(You can expand this section with more details about specific features implemented)*
 
-* Displays a list of CS:GO matches.
+* Displays a list upcoming of CS:GO matches.
 * Shows details for a selected match.
 * **Localization**: Supports both English (en) and Portuguese (pt) languages.
+* Some of the design decision were made to showcase my expertise in Android development.
+  and, although not needed in such a simple project, i choose to implement them.
 
 ## Tech Stack & Architectural Decisions
 
 This project is built using modern Android development practices and libraries.
-Using Android Studio Narwhal | 2025.1.1 Patch 1
+Using Android Studio Narwhal | 2025.1.1 Patch 1, and Java 21
 
 ### Core Architecture
 
+* **build-config**: The project uses a build config module that is used to store all logic related
+  to the build and, if needed share it.
+  This makes the modules build.gradle.kts appear "naked", but all its logics is applied from
+  (`android-application-convention.gradle.kts`) or (`android-library-convention.gradle.kts`)
 * **Modular Design**: The project is structured into multiple modules (`app`, `feature-core`,
   `feature-main`, `feature-details`) to promote separation of concerns, scalability, and
   maintainability.
@@ -69,18 +75,6 @@ Using Android Studio Narwhal | 2025.1.1 Patch 1
   [Oracle's website](https://www.oracle.com/java/technologies/downloads/#java21)
   or use a distribution like OpenJDK.
 
-## Notes
-
-* **Screen Orientation (Portrait Lock):**
-    * **Decision:** The application is intentionally locked to Portrait mode.
-    * **Rationale:** This was a deliberate choice to streamline development for this challenge,
-      allowing for a more focused implementation of the requested features without the added
-      complexity of adaptive layouts for multiple orientations.
-    * **Implementation:** Portrait mode is enforced programmatically within Jetpack Compose. The
-      `Activity.requestedOrientation` is set to `ActivityInfo.SCREEN_ORIENTATION_PORTRAIT` at the
-      root of the UI in `MainActivity.kt`, using a reusable `LockScreenOrientation`
-      composable ([1]).
-
 ## How to Run the Project
 
 1. **Clone the repository:**
@@ -94,12 +88,15 @@ Using Android Studio Narwhal | 2025.1.1 Patch 1
     * Open Android Studio (latest stable version recommended).
     * Click on "Open" or "Open an Existing Project".
     * Navigate to the cloned `Fuse.CSGOMatches` directory and select it.
-3. **Build the Project:**
+3. **Verify the if Java 21 is installed:** 
+    * If is not in the windows PATH, Android Studio will ask you to choose a proper JVM
+    * If is in the windows PATH, Android Studio open the project normally
+4. **Build the Project:**
     * Android Studio should automatically sync the Gradle project. If not, click on "Sync
       Project with Gradle Files" (elephant icon in the toolbar).
     * Once synced, build the project using "Build" > "Make Project" or by clicking the
       hammer icon.
-4. **Run the Application:**
+5. **Run the Application:**
     * Select the `app` configuration from the run configurations dropdown.
     * Choose an emulator or connect a physical Android device (with USB debugging
       enabled).
@@ -110,7 +107,7 @@ Using Android Studio Narwhal | 2025.1.1 Patch 1
 * **API Key (`app\\config.xml`)**: This file contains the API key for the PandaScore
   service. Normally, this file would be added to `.gitignore` to prevent committing
   sensitive credentials. However, for the purpose of this challenge and for convenience,
-  it has been committed to the repository. In a production environment, ensure such files
+  it has been added to the repository. In a production environment, ensure such files
   are properly gitignored and keys are managed securely (e.g., via environment
   variables, CI secrets, etc.
 
