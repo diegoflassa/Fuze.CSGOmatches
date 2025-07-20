@@ -19,6 +19,9 @@ dependencies {
 
     //Unit tests
     testImplementation(libs.junit)
+    testImplementation(libs.io.mockk)
+    testImplementation(libs.org.jetbrains.kotlinx.coroutines.test)
+    testImplementation(libs.app.cash.turbine)
 
     //Instrumented Tests
     androidTestImplementation(libs.ax.test.ext.junit.ktx)

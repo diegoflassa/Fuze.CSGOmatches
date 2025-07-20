@@ -2,14 +2,12 @@ package dev.diegoflassa.fusecsgomatches.main.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.diegoflassa.fusecsgomatches.main.data.dto.MatchDto
-import dev.diegoflassa.fusecsgomatches.main.data.paging.MatchesPagingSource
-import dev.diegoflassa.fusecsgomatches.main.data.repository.interfaces.IMatchesRepository
+import dev.diegoflassa.fusecsgomatches.main.domain.useCases.GetMatchesUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val matchesRepository: IMatchesRepository,
+    private val getMatchesUseCase: GetMatchesUseCase,
 ) : ViewModel() {
 
     private val pagingConfig =
@@ -57,10 +55,8 @@ class MainViewModel @Inject constructor(
     private fun fetchMatches() {
         _uiState.update { it.copy(isLoading = true, error = null) }
         try {
-            val newMatchesFlow: Flow<PagingData<MatchDto>> = Pager(
-                config = pagingConfig,
-                pagingSourceFactory = { MatchesPagingSource(matchesRepository) }
-            ).flow.cachedIn(viewModelScope)
+            val newMatchesFlow: Flow<PagingData<MatchDto>> =
+                getMatchesUseCase(pagingConfig).cachedIn(viewModelScope)
 
             _uiState.update {
                 it.copy(

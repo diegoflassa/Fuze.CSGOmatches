@@ -4,17 +4,23 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.diegoflassa.fusecsgomatches.details.data.dto.OpponentsResponseDto
-import dev.diegoflassa.fusecsgomatches.details.data.repository.interfaces.IOpponentsRepository
+import dev.diegoflassa.fusecsgomatches.core.domain.model.DomainResult
+import dev.diegoflassa.fusecsgomatches.details.domain.useCases.GetOpponentsUseCase
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import retrofit2.Response
 import javax.inject.Inject
 
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
-    private val opponentsRepository: IOpponentsRepository,
+    private val getOpponentsUseCase: GetOpponentsUseCase, // Changed from IOpponentsRepository
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -35,55 +41,32 @@ class DetailsViewModel @Inject constructor(
                 )
             }
 
-            try {
-                val response: Response<OpponentsResponseDto> =
-                    opponentsRepository.getOpponents(idOrSlug)
+            getOpponentsUseCase(idOrSlug)
+                .onEach { result ->
+                    when (result) {
+                        is DomainResult.Success -> {
+                            _uiState.update {
+                                it.copy(
+                                    isLoading = false,
+                                    opponents = result.data,
+                                    error = null
+                                )
+                            }
+                        }
 
-                if (response.isSuccessful) {
-                    val opponentsData = response.body()
-                    if (opponentsData != null) {
-                        _uiState.update {
-                            it.copy(
-                                isLoading = false,
-                                opponents = opponentsData,
-                                error = null
-                            )
+                        is DomainResult.Error -> {
+                            _uiState.update {
+                                it.copy(
+                                    isLoading = false,
+                                    error = result.message,
+                                    opponents = null
+                                )
+                            }
+                            _effect.send(DetailsEffect.ShowError(result.message))
                         }
-                    } else {
-                        val errorMessage = "Empty response body from server."
-                        _uiState.update {
-                            it.copy(
-                                isLoading = false,
-                                error = errorMessage,
-                                opponents = null
-                            )
-                        }
-                        _effect.send(DetailsEffect.ShowError(errorMessage))
                     }
-                } else {
-                    val errorMessage = "API Error: ${response.code()} - ${
-                        response.message().ifEmpty { "Unknown API error" }
-                    }"
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            error = errorMessage,
-                            opponents = null
-                        )
-                    }
-                    _effect.send(DetailsEffect.ShowError(errorMessage))
                 }
-            } catch (e: Exception) {
-                val errorMessage = e.message ?: "An unexpected error occurred."
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        error = errorMessage,
-                        opponents = null
-                    )
-                }
-                _effect.send(DetailsEffect.ShowError(errorMessage))
-            }
+                .launchIn(viewModelScope)
         }
     }
 
@@ -144,4 +127,3 @@ class DetailsViewModel @Inject constructor(
         }
     }
 }
-
