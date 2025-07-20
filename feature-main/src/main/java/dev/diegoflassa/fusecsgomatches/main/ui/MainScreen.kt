@@ -408,11 +408,11 @@ fun MainScreenContent(
             item {
                 when (matches.loadState.append) {
                     is LoadState.Loading -> {
-                        /*                        Box(
-                                                    modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-                                                ) {
-                                                    CircularProgressIndicator(color = FuseCSGOMatchesTheme.colorScheme.tertiary)
-                                                }*/
+                        Box(
+                            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = FuseCSGOMatchesTheme.colorScheme.tertiary)
+                        }
                     }
 
                     is LoadState.Error -> {
