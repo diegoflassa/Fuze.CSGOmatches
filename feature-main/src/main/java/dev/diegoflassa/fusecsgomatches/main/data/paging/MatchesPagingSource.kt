@@ -1,6 +1,5 @@
 package dev.diegoflassa.fusecsgomatches.main.data.paging
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import dev.diegoflassa.fusecsgomatches.core.data.enums.MatchStatus

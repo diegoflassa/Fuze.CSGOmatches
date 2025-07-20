@@ -10,11 +10,9 @@
     <string name="team_logo_desc">Logo of %1$s</string>
     <string name="now">NOW</string>
     <string name="scheduled_today">Today, %1$s</string>
-    <string name="league_and_series" translatable="false">%1$s - %2$s%s</string>
+    <string name="league_and_series" translatable="false">%1$s - %2$s</string>
     <string name="alert">Alert</string>
     <string name="please_try_to_refresh_the_page">Please, try to refresh the page</string>
-    <string name="refresh">Refresh</string>
     <string name="apply_filter_description">Apply filter</string>
-    <string name="videogame_title" translatable="false">Game: %1$s</string>
     <string name="or_try_disable_the_filter">Or, try to disable the \"Search only future events\" in the filter.</string>
 </resources>

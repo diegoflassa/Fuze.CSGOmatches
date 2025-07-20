@@ -96,17 +96,12 @@ import dev.diegoflassa.fusecsgomatches.core.ui.DialogManagerFactory
 import dev.diegoflassa.fusecsgomatches.core.ui.DialogState
 import dev.diegoflassa.fusecsgomatches.core.ui.filterDialog
 import dev.diegoflassa.fusecsgomatches.main.R
-import dev.diegoflassa.fusecsgomatches.main.data.dto.GameDto
 import dev.diegoflassa.fusecsgomatches.main.data.dto.LeagueDto
 import dev.diegoflassa.fusecsgomatches.main.data.dto.LiveDto
 import dev.diegoflassa.fusecsgomatches.main.data.dto.MatchDto
 import dev.diegoflassa.fusecsgomatches.main.data.dto.OpponentDetailsDto
 import dev.diegoflassa.fusecsgomatches.main.data.dto.OpponentWrapperDto
-import dev.diegoflassa.fusecsgomatches.main.data.dto.ResultDto
 import dev.diegoflassa.fusecsgomatches.main.data.dto.SerieDto
-import dev.diegoflassa.fusecsgomatches.main.data.dto.TournamentDto
-import dev.diegoflassa.fusecsgomatches.main.data.dto.VideogameDto
-import dev.diegoflassa.fusecsgomatches.main.data.dto.WinnerDto
 import kotlinx.coroutines.flow.collectLatest
 import java.time.Instant
 import java.time.LocalDate
@@ -872,8 +867,6 @@ class SampleMatchDtoProvider : PreviewParameterProvider<MatchDto> {
             name = "Team Alpha vs Team Bravo",
             status = MatchStatus.ENDED,
             beginAt = Instant.now().minusSeconds(3600),
-            team1Score = 2,
-            team2Score = 1,
             isLive = false
         )
     )
@@ -916,145 +909,45 @@ private fun createSampleMatchDto(
     name: String,
     status: MatchStatus = MatchStatus.UNKNOWN,
     beginAt: Instant?,
-    numberOfGames: Int = 3,
     leagueName: String = "ESL Pro League",
     team1Name: String = "Team Alpha",
     team1ImageUrl: Uri? = "https://via.placeholder.com/150/FF0000/FFFFFF?Text=A".toUri(),
     team2Name: String = "Team Bravo With A Very Long Name",
     team2ImageUrl: Uri? = "https://via.placeholder.com/150/0000FF/FFFFFF?Text=B".toUri(),
-    team1Score: Int = 0,
-    team2Score: Int = 0,
     isLive: Boolean = false
 ): MatchDto {
-    val team1Id = id * 100 + 1
-    val team2Id = id * 100 + 2
     return MatchDto(
         id = id,
         name = name,
-        beginAt = beginAt,
         scheduledAt = if (beginAt == null && status == MatchStatus.SCHEDULED) Instant.now()
             .plusSeconds(3600) else beginAt,
-        endAt = if (status == MatchStatus.ENDED) beginAt?.plusSeconds(3600 * 2) else null,
-        forfeit = false,
-        leagueId = id * 10,
         league = LeagueDto(
-            id = id * 10,
             imageUrl = team1ImageUrl,
             name = leagueName,
-            slug = leagueName.lowercase().replace(" ", "-"),
-            url = null,
-            modifiedAt = Instant.now()
         ),
         live = LiveDto(
-            opensAt = null,
             supported = isLive,
-            url = if (isLive) "https://twitch.tv/example" else null
         ),
-        matchType = "best_of",
-        modifiedAt = Instant.now().minusSeconds(600),
-        numberOfGames = numberOfGames,
         opponents = listOf(
             OpponentWrapperDto(
                 opponent = OpponentDetailsDto(
-                    id = team1Id,
                     imageUrl = team1ImageUrl,
                     name = team1Name,
-                    slug = team1Name.lowercase().replace(" ", "-"),
-                    acronym = team1Name.take(3).uppercase()
-                ), type = "team"
+
+                    ),
             ), OpponentWrapperDto(
                 opponent = OpponentDetailsDto(
-                    id = team2Id,
                     imageUrl = team2ImageUrl,
                     name = team2Name,
-                    slug = team2Name.lowercase().replace(" ", "-"),
-                    acronym = team2Name.take(3).uppercase()
-                ), type = "team"
+                ),
             )
         ),
-        originalScheduledAt = beginAt?.minusSeconds(if (status == MatchStatus.SCHEDULED) 7200 else 0),
-        results = listOf(
-            ResultDto(score = team1Score, teamId = team1Id),
-            ResultDto(score = team2Score, teamId = team2Id)
-        ),
-        serieId = id * 1000,
         serie = SerieDto(
-            beginAt = beginAt?.minusSeconds(86400),
-            endAt = beginAt?.plusSeconds(86400 * 5),
             fullName = "$leagueName Season ${id % 5 + 1}",
-            id = id * 1000,
-            leagueId = id * 10,
-            modifiedAt = Instant.now(),
             name = "Season ${id % 5 + 1}",
-            season = "${2023 + id % 3}",
-            slug = "season-${id % 5 + 1}",
-            winnerId = null,
-            winnerType = null,
-            year = (2023 + id % 3).toInt()
         ),
         slug = name.lowercase().replace(" ", "-") + "-${id}",
         status = status,
-        streamsList = if (isLive) listOf() else emptyList(),
-        tournamentId = id * 10000,
-        tournament = TournamentDto(
-            beginAt = beginAt?.minusSeconds(86400 * 2),
-            endAt = beginAt?.plusSeconds(86400 * 7),
-            id = id * 10000,
-            leagueId = id * 10,
-            modifiedAt = Instant.now(),
-            name = "Main Event",
-            prizepool = "100,000 USD",
-            serieId = id * 1000,
-            slug = "main-event-${id}",
-            tier = "a",
-            winnerId = null,
-            winnerType = null,
-            country = "INT",
-            detailedStats = true,
-            hasBracket = true,
-            liveSupported = isLive,
-            region = "EU",
-            type = "Online"
-        ),
-        videogame = VideogameDto(id = 1, name = "CS:GO", slug = "csgo"),
-        videogameTitle = null,
-        winnerId = if (status == MatchStatus.ENDED && team1Score > team2Score) team1Id else if (status == MatchStatus.ENDED && team2Score > team1Score) team2Id else null,
-        winnerType = if (status == MatchStatus.ENDED) "Team" else null,
-        games = List(numberOfGames) { gameIndex ->
-            val gameFinished =
-                status == MatchStatus.ENDED && (gameIndex < team1Score || gameIndex < team2Score)
-            val gameWinnerId =
-                if (gameFinished) (if (gameIndex < team1Score) team1Id else team2Id) else null
-            GameDto(
-                beginAt = beginAt?.plusSeconds(3600L * gameIndex),
-                complete = gameFinished,
-                detailedStats = true,
-                endAt = if (gameFinished) beginAt?.plusSeconds(3600L * gameIndex + 2700) else null,
-                finished = gameFinished,
-                forfeit = false,
-                id = id * 100000 + gameIndex,
-                length = if (gameFinished) 45 else null,
-                matchId = id,
-                position = gameIndex + 1,
-                status = if (gameFinished) MatchStatus.ENDED else if (gameIndex == 0 && status == MatchStatus.IN_PROGRESS) MatchStatus.IN_PROGRESS else MatchStatus.SCHEDULED,
-                winner = WinnerDto(
-                    id = gameWinnerId, type = "Team"
-                ),
-                winnerType = "Team"
-            )
-        },
-        draw = false,
-        detailedStats = true,
-        winner = if (status == MatchStatus.ENDED && team1Score > team2Score) WinnerDto(
-            id = team1Id, type = "Team"
-        )
-        else if (status == MatchStatus.ENDED && team2Score > team1Score) WinnerDto(
-            id = team2Id, type = "Team"
-        )
-        else null,
-        videogameVersion = null,
-        rescheduled = false,
-        gameAdvantage = null
     )
 }
 
@@ -1072,8 +965,6 @@ private fun sampleMatchesForPreview(count: Int): List<MatchDto> {
             },
             beginAt = Instant.now().minusSeconds((index * 3600).toLong()),
             isLive = (index % 5 == 0),
-            team1Score = if (index % 5 == 1 && index % 2 == 0) 2 else if (index % 5 == 1) 1 else 0,
-            team2Score = if (index % 5 == 1 && index % 2 != 0) 2 else if (index % 5 == 1) 0 else 0
         )
     }
 }

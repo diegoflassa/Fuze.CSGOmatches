@@ -3,7 +3,6 @@
     <string name="no_opponents_message">Nenhum oponente encontrado para esta partida.</string>
     <string name="error_loading_matches">Erro ao carregar detalhes da partida.</string>
     <string name="no_matches_found">Detalhes da partida não encontrados.</string>
-    <string name="league_and_series">%1$s - %2$s</string>
     <string name="team_1">Equipe 1</string>
     <string name="team_2">Equipe 2</string>
     <string name="vs">vs</string>

@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.diegoflassa.fusecsgomatches.core.domain.model.DomainResult
-import dev.diegoflassa.fusecsgomatches.details.domain.useCases.GetOpponentsUseCase
 import dev.diegoflassa.fusecsgomatches.details.domain.useCases.IGetOpponentsUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow

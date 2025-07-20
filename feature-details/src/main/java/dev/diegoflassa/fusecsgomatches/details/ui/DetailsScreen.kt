@@ -74,11 +74,9 @@ import dev.diegoflassa.fusecsgomatches.details.R
 import dev.diegoflassa.fusecsgomatches.details.data.dto.OpponentsResponseDto
 import dev.diegoflassa.fusecsgomatches.details.data.dto.OpponentTeamDetailDto
 import dev.diegoflassa.fusecsgomatches.details.data.dto.PlayerDetailDto
-import dev.diegoflassa.fusecsgomatches.details.data.dto.VideogameDto
 import kotlinx.coroutines.flow.collectLatest
 import androidx.compose.ui.zIndex
 import dev.diegoflassa.fusecsgomatches.core.ui.ButtonDialogOkConfirm
-import java.time.Instant
 
 private const val tag = "DetailsScreen"
 
@@ -621,7 +619,6 @@ private val samplePlayer1 = PlayerDetailDto(
     name = "Player One",
     firstName = "One",
     lastName = "Player",
-    role = "Entry",
     imageUrl = "https://cdn.pandascore.co/images/player/image/1/player_one.png".toUri()
 )
 private val samplePlayer2 = PlayerDetailDto(
@@ -629,7 +626,6 @@ private val samplePlayer2 = PlayerDetailDto(
     name = "Player Two",
     firstName = "Two",
     lastName = "Player",
-    role = "Awper",
     imageUrl = "https://cdn.pandascore.co/images/player/image/2/player_two.png".toUri()
 )
 private val samplePlayer3 = PlayerDetailDto(
@@ -637,7 +633,6 @@ private val samplePlayer3 = PlayerDetailDto(
     name = "Player Three",
     firstName = "Three",
     lastName = "Player",
-    role = "Support",
     imageUrl = "https://cdn.pandascore.co/images/player/image/3/player_three.png".toUri()
 )
 
@@ -648,7 +643,6 @@ private val sampleTeam2Players = listOf(
         name = "Player Alpha",
         firstName = "Alpha",
         lastName = "Player",
-        role = "Lurker",
         imageUrl = "https://cdn.pandascore.co/images/player/image/4/player_alpha.png".toUri()
     ),
     PlayerDetailDto(
@@ -656,43 +650,24 @@ private val sampleTeam2Players = listOf(
         name = "Player Beta",
         firstName = "Beta",
         lastName = "Player",
-        role = "IGL",
         imageUrl = "https://cdn.pandascore.co/images/player/image/5/player_beta.png".toUri()
     )
 )
 
 private val sampleTeam1 = OpponentTeamDetailDto(
-    id = 101,
     name = "Crimson Dragons",
     imageUrl = "https://cdn.pandascore.co/images/team/image/101/crimson_dragons.png".toUri(),
     players = sampleTeam1Players,
-    location = "KR",
-    slug = "crimson-dragons",
-    modifiedAt = Instant.now(),
-    acronym = "CRD",
-    currentVideogame = VideogameDto(1, "CSGO", "cs-go")
 )
 private val sampleTeam2 = OpponentTeamDetailDto(
-    id = 102,
     name = "Azure Knights withe e very long name",
     imageUrl = "https://cdn.pandascore.co/images/team/image/102/azure_knights.png".toUri(),
     players = sampleTeam2Players,
-    location = "US",
-    slug = "azure-knights",
-    modifiedAt = Instant.now(),
-    acronym = "AZK",
-    currentVideogame = VideogameDto(1, "CSGO", "cs-go")
 )
 private val sampleTeam3 = OpponentTeamDetailDto(
-    id = 103,
     name = "Green Serpents",
     imageUrl = "https://cdn.pandascore.co/images/team/image/103/green_serpents.png".toUri(),
     players = listOf(samplePlayer1),
-    location = "EU",
-    slug = "green-serpents",
-    modifiedAt = Instant.now(),
-    acronym = "GRS",
-    currentVideogame = VideogameDto(1, "CSGO", "cs-go")
 )
 
 
