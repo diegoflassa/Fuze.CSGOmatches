@@ -45,6 +45,8 @@ object FuseCSGOMatchesColors {
     val imageAbsentColor = Color(0xFFC4C4C4)//Ok
     val colorDetailsCardName = Color(0xFF6C6B7E)//Ok
     val transparent = Color(0x00000000)//Ok
+
+    val buttonDisabled = Color(0xFF6C6B7E)//Ok
 }
 
 

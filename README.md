@@ -12,6 +12,13 @@ Offensive (CS:GO) matches.
 * **Localization**: Supports both English (en) and Portuguese (pt) languages.
 * Some of the design decision were made to showcase my expertise in Android development.
   and, although not needed in such a simple project, i choose to implement them.
+* Added a filter to enable to see or upcoming or all matches, as well as filter per game
+
+## Suggestions for Improvement
+
+* Add a filter to enable to show all, or upcoming Matches, as well as filter for a
+  specific game (Implemented)
+* Add one badge for each status of the Match
 
 ## Tech Stack & Architectural Decisions
 

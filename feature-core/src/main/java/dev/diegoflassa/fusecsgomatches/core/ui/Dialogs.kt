@@ -1,12 +1,36 @@
 package dev.diegoflassa.fusecsgomatches.core.ui
 
+import android.app.AlertDialog
+import android.app.Dialog
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -14,13 +38,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import dev.diegoflassa.fusecsgomatches.core.R
 import dev.diegoflassa.fusecsgomatches.core.extensions.copy
 import dev.diegoflassa.fusecsgomatches.core.theme.FuseCSGOMatchesColors
 import dev.diegoflassa.fusecsgomatches.core.theme.FuseCSGOMatchesTheme
+import dev.diegoflassa.fusecsgomatches.core.theme.FuseCSGOMatchesThemeContent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -31,6 +59,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.Stack
 
+@Suppress("unused")
 object DialogManagerFactory {
 
     private val dialogManagers = mutableMapOf<String, DialogManager>()
@@ -107,10 +136,12 @@ class DialogManager internal constructor() {
     }
 }
 
+@Suppress("unused")
 open class DialogState(
     val onDismissRequest: (() -> Unit)? = null,
     val confirmButton: @Composable (() -> Unit)? = null,
     val modifier: Modifier? = null,
+    val body: @Composable (() -> Unit)? = null, // Added body property
     val dismissButton: @Composable (() -> Unit)? = null,
     val icon: @Composable (() -> Unit)? = null,
     val title: @Composable (() -> Unit)? = null,
@@ -128,6 +159,7 @@ open class DialogState(
         private var onDismissRequest: (() -> Unit)? = null
         private var confirmButton: @Composable (() -> Unit)? = null
         private var modifier: Modifier? = null
+        private var body: @Composable (() -> Unit)? = null // Added body property
         private var dismissButton: @Composable (() -> Unit)? = null
         private var icon: @Composable (() -> Unit)? = null
         private var title: @Composable (() -> Unit)? = null
@@ -152,6 +184,11 @@ open class DialogState(
 
         fun modifier(modifier: Modifier): Builder {
             this.modifier = modifier
+            return this
+        }
+
+        fun body(body: @Composable () -> Unit): Builder { // Added body method
+            this.body = body
             return this
         }
 
@@ -224,6 +261,7 @@ open class DialogState(
             onDismissRequest = onDismissRequest,
             confirmButton = confirmButton,
             modifier = modifier,
+            body = body, // Added body to constructor call
             dismissButton = dismissButton,
             icon = icon,
             title = title,
@@ -249,7 +287,7 @@ open class DialogState(
             dismissButton = dismissButton ?: {},
             icon = icon,
             title = title,
-            text = text,
+            text = body ?: text, // MODIFIED: Use custom body or fallback to text
             shape = shape ?: AlertDialogDefaults.shape,
             containerColor = containerColor ?: FuseCSGOMatchesTheme.colorScheme.secondaryContainer,
             iconContentColor = iconContentColor
@@ -339,7 +377,10 @@ fun ButtonDialog(
 ) {
     Button(
         modifier = modifier.wrapContentSize(),
-        colors = colorsButtonDialog.copy(containerColor = buttonBackground, disabledContainerColor = buttonBackground),
+        colors = colorsButtonDialog.copy(
+            containerColor = buttonBackground,
+            disabledContainerColor = buttonBackground
+        ),
         onClick = onClick ?: {}
     ) {
         Text(
@@ -387,21 +428,6 @@ fun ButtonDialogSimConfirm(modifier: Modifier = Modifier, onClick: (() -> Unit)?
 }
 
 @Composable
-fun ButtonDialogSimText(
-    modifier: Modifier = Modifier,
-    text: String = "",
-    textColor: Color = FuseCSGOMatchesTheme.colorScheme.onSecondaryContainer,
-    onClick: (() -> Unit)? = null
-) {
-    ButtonDialog(
-        modifier = modifier,
-        text = stringResource(R.string.sim_texto, text),
-        textColor = textColor,
-        onClick = onClick
-    )
-}
-
-@Composable
 fun ButtonDialogNaoDismiss(modifier: Modifier = Modifier, onClick: (() -> Unit)? = null) {
     ButtonDialog(
         modifier = modifier,
@@ -409,4 +435,157 @@ fun ButtonDialogNaoDismiss(modifier: Modifier = Modifier, onClick: (() -> Unit)?
         textColor = FuseCSGOMatchesTheme.colorScheme.onSecondaryContainer,
         onClick = onClick
     )
+}
+
+@Composable
+fun ButtonDialogCancel(modifier: Modifier = Modifier, onClick: (() -> Unit)? = null) {
+    ButtonDialog(
+        modifier = modifier,
+        text = stringResource(R.string.cancel),
+        textColor = FuseCSGOMatchesTheme.colorScheme.onSecondaryContainer,
+        onClick = onClick
+    )
+}
+
+data class CheckboxListItem(
+    val id: String,
+    val text: String,
+    val isChecked: MutableState<Boolean>
+)
+
+@Composable
+fun filterDialog(
+    onDismissRequest: () -> Unit = {},
+    onFilter: (onlyFutureEvents: Boolean, selectedItems: Set<String>) -> Unit = { _, _ -> },
+    dialogTitle: String = "Filters",
+    futureEventsSwitchText: String = stringResource(R.string.search_future_events),
+    onlyFutureGames: Boolean = true,
+    games: List<Pair<String, Boolean>> = emptyList()
+): DialogState {
+
+    var onlyFutureGamesState by remember { mutableStateOf(onlyFutureGames) }
+
+    val selectableItems = remember(games) {
+        games.map { pair ->
+            CheckboxListItem(
+                id = pair.first,
+                text = pair.first,
+                isChecked = mutableStateOf(pair.second)
+            )
+        }
+    }
+
+    val dialogBody: @Composable () -> Unit = {
+        SettingsBody(
+            futureEventsValue = onlyFutureGamesState,
+            onFutureEventsChange = { newValue -> onlyFutureGamesState = newValue },
+            items = selectableItems,
+            futureEventsText = futureEventsSwitchText
+        )
+    }
+
+    return DialogState.Builder()
+        .title(dialogTitle)
+        .body(dialogBody)
+        .onDismissRequest(onDismissRequest)
+        .dismissButton {
+            ButtonDialogCancel {
+                onDismissRequest.invoke()
+            }
+        }
+        .confirmButton {
+            ButtonDialogText(text = stringResource(R.string.apply)) {
+                val selectedIds = selectableItems
+                    .filter { it.isChecked.value }
+                    .map { it.text }.toSet()
+                onFilter.invoke(onlyFutureGamesState, selectedIds)
+                onDismissRequest()
+            }
+        }
+        .build()
+}
+
+@Composable
+private fun SettingsBody(
+    futureEventsValue: Boolean,
+    onFutureEventsChange: (Boolean) -> Unit,
+    items: List<CheckboxListItem>,
+    futureEventsText: String
+) {
+    Column(
+        modifier = Modifier
+            .padding(start = 24.dp, end = 24.dp, top = 20.dp, bottom = 8.dp)
+            .fillMaxWidth()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+        ) {
+            Text(
+                text = futureEventsText,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.weight(1f)
+            )
+            Switch(
+                checked = futureEventsValue,
+                onCheckedChange = onFutureEventsChange
+            )
+        }
+
+        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+        Text(
+            text = stringResource(R.string.games_title),
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        // Scrollable list of Checkboxes
+        LazyColumn(
+            modifier = Modifier
+                // .weight(1f, fill = false) // May not be needed if Dialog auto-sizes, or use heightIn
+                .heightIn(max = 200.dp) // Set a max height for the scrollable area
+                .fillMaxWidth()
+        ) {
+            items(items) { item ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                ) {
+                    Checkbox(
+                        checked = item.isChecked.value,
+                        onCheckedChange = { item.isChecked.value = it }
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = item.text, // Display text from CheckboxListItem
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true, name = "Filter Dialog Preview")
+@Composable
+fun FilterDialogPreview() {
+    FuseCSGOMatchesThemeContent {
+        val dialogState = filterDialog(
+            onDismissRequest = {},
+            onFilter = { _, _ -> },
+            dialogTitle = "Filter Events Preview",
+            games = listOf(
+                Pair("Major Championships", false),
+                Pair("Qualifiers", true),
+                Pair("Online Leagues", false),
+                Pair("LAN Finals", false)
+            )
+        )
+        dialogState.ExibirDialog()
+    }
 }

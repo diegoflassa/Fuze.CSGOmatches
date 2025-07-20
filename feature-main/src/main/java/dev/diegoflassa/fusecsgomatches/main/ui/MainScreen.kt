@@ -16,10 +16,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -30,6 +30,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.outlined.BrokenImage
+import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -37,9 +38,13 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -53,6 +58,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
@@ -67,6 +73,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.core.net.toUri
@@ -88,6 +95,7 @@ import dev.diegoflassa.fusecsgomatches.core.ui.ButtonDialogText
 import dev.diegoflassa.fusecsgomatches.core.ui.DialogManager
 import dev.diegoflassa.fusecsgomatches.core.ui.DialogManagerFactory
 import dev.diegoflassa.fusecsgomatches.core.ui.DialogState
+import dev.diegoflassa.fusecsgomatches.core.ui.filterDialog
 import dev.diegoflassa.fusecsgomatches.main.R
 import dev.diegoflassa.fusecsgomatches.main.data.dto.GameDto
 import dev.diegoflassa.fusecsgomatches.main.data.dto.LeagueDto
@@ -134,6 +142,20 @@ fun MainScreen(
     }
 
     val dialogTitle = stringResource(R.string.alert)
+    val onDismiss: () -> Unit = {
+        dialogManager?.removerDialog()
+    }
+    val onFilter: (onlyFutureEvents: Boolean, selectedItems: Set<String>) -> Unit =
+        { onlyFutureEvents, selectedItems ->
+            dialogManager?.removerDialog()
+            viewModel.reduce(MainIntent.ApplyFilter(onlyFutureEvents, selectedItems))
+        }
+    val filterDialog = filterDialog(
+        onDismissRequest = onDismiss,
+        onFilter = onFilter,
+        onlyFutureGames = uiState.onlyFutureGames,
+        games = uiState.games
+    )
     LaunchedEffect(key1 = viewModel.effect) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
@@ -152,6 +174,11 @@ fun MainScreen(
                     dialogManager?.adicionarDialog(dialog)
                 }
 
+                is MainEffect.ShowFilter -> {
+                    dialogManager?.adicionarDialog(filterDialog)
+
+                }
+
                 is MainEffect.NavigateToDetails -> {
                     navigationViewModel.navigateToDetails(
                         matchIdOrSlug = effect.matchIdOrSlug,
@@ -164,130 +191,179 @@ fun MainScreen(
         }
     }
 
-    val pullToRefreshState = rememberPullToRefreshState()
-    PullToRefreshBox(
-        modifier = Modifier.fillMaxSize(),
-        state = pullToRefreshState,
-        isRefreshing = (matchesLazyItems.loadState.refresh is LoadState.Loading),
-        onRefresh = {
-            matchesLazyItems.refresh()
-        },
-        indicator = {
-            if (pullToRefreshState.distanceFraction > 0f && matchesLazyItems.loadState.refresh !is LoadState.Loading) {
-                Indicator(
-                    modifier = Modifier.align(Alignment.TopCenter),
-                    state = pullToRefreshState,
-                    isRefreshing = matchesLazyItems.loadState.refresh is LoadState.Loading
-                )
-            }
-        }
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .safeDrawingPadding()
-        ) {
-            when (val refreshLoadState = matchesLazyItems.loadState.refresh) {
-                is LoadState.Loading -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(color = FuseCSGOMatchesTheme.colorScheme.tertiary)
-                    }
-                }
-
-                is LoadState.Error -> {
-                    val error = refreshLoadState.error
+    Scaffold(
+        containerColor = Color.Transparent,
+        topBar = {
+            TopAppBar(
+                modifier = Modifier.padding(
+                    top = FuseCSGOMatchesTheme.dimen.mainTopAppContentTopPadding,
+                    start = FuseCSGOMatchesTheme.dimen.smallPadding,
+                    end = FuseCSGOMatchesTheme.dimen.mainTopAppContentEndPadding
+                ),
+                title = {
                     Box(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(FuseCSGOMatchesTheme.dimen.mediumPadding),
-                        contentAlignment = Alignment.Center
+                            .fillMaxWidth()
+                            .wrapContentHeight()
                     ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.ErrorOutline,
-                                contentDescription = null,
-                                tint = FuseCSGOMatchesTheme.colorScheme.onError,
-                                modifier = Modifier.size(FuseCSGOMatchesTheme.dimen.bigLargePadding)
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = error.localizedMessage
-                                    ?: stringResource(id = R.string.error_loading_matches),
-                                color = FuseCSGOMatchesTheme.colorScheme.onError,
-                                textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                            Spacer(
-                                modifier = Modifier
-                                    .height(FuseCSGOMatchesTheme.dimen.mediumPadding)
-                                    .fillMaxSize()
-                            )
-                            Text(
-                                stringResource(id = R.string.please_try_to_refresh_the_page),
-                                color = FuseCSGOMatchesTheme.colorScheme.onBackground,
-                                style = FuseCSGOMatchesTheme.typography.textStyleNoMatchesFound,
-                            )
-                            Spacer(
-                                modifier = Modifier
-                                    .height(FuseCSGOMatchesTheme.dimen.mediumPadding)
-                                    .fillMaxSize()
-                            )
-                            ButtonDialogText(
-                                text = stringResource(id = R.string.retry),
-                                buttonBackground = FuseCSGOMatchesTheme.colorScheme.secondaryContainer
-                            ) {
-                                viewModel.reduce(MainIntent.LoadMatches)
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(FuseCSGOMatchesTheme.dimen.mainTopAppBarHeight),
+                            text = stringResource(id = R.string.matches_title),
+                            style = FuseCSGOMatchesTheme.typography.textStyleMainScreenTitle,
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {
+                        if (uiState.games.isNotEmpty()) {
+                            viewModel.reduce(MainIntent.ShowFilter)
+                        }
+                    }) {
+                        Icon(
+                            imageVector = Icons.Outlined.FilterList,
+                            contentDescription = stringResource(id = R.string.apply_filter_description),
+                            tint = if (uiState.games.isNotEmpty()) {
+                                FuseCSGOMatchesTheme.colorScheme.onBackground
+                            } else {
+                                FuseCSGOMatchesColors.buttonDisabled
                             }
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = FuseCSGOMatchesTheme.colorScheme.surface,
+                    titleContentColor = FuseCSGOMatchesTheme.colorScheme.onSurface,
+                    navigationIconContentColor = FuseCSGOMatchesTheme.colorScheme.onSurface
+                )
+            )
+        },
+        modifier = Modifier.fillMaxSize()
+    ) { paddingValues ->
+        val pullToRefreshState = rememberPullToRefreshState()
+        PullToRefreshBox(
+            modifier = Modifier.fillMaxSize(),
+            state = pullToRefreshState,
+            isRefreshing = uiState.isLoading,
+            onRefresh = { viewModel.reduce(MainIntent.LoadMatches) },
+            indicator = {
+                Indicator(
+                    modifier = Modifier
+                        .zIndex(1f)
+                        .align(Alignment.TopCenter),
+                    state = pullToRefreshState,
+                    isRefreshing = uiState.isLoading
+                )
+            }
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                when (val refreshLoadState = matchesLazyItems.loadState.refresh) {
+                    is LoadState.Loading -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = FuseCSGOMatchesTheme.colorScheme.tertiary)
                         }
                     }
-                }
 
-                is LoadState.NotLoading -> {
-                    if (matchesLazyItems.itemCount == 0 && matchesLazyItems.loadState.append.endOfPaginationReached) {
-                        Column(
+                    is LoadState.Error -> {
+                        val error = refreshLoadState.error
+                        Box(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(FuseCSGOMatchesTheme.dimen.mediumPadding),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally,
+                            contentAlignment = Alignment.Center
                         ) {
-                            Text(
-                                stringResource(id = R.string.no_matches_found),
-                                color = FuseCSGOMatchesTheme.colorScheme.onBackground,
-                                style = FuseCSGOMatchesTheme.typography.textStyleNoMatchesFound,
-                            )
-                            Spacer(
-                                modifier = Modifier
-                                    .height(FuseCSGOMatchesTheme.dimen.mediumPadding)
-                                    .fillMaxSize()
-                            )
-                            Text(
-                                stringResource(id = R.string.please_try_to_refresh_the_page),
-                                color = FuseCSGOMatchesTheme.colorScheme.onBackground,
-                                style = FuseCSGOMatchesTheme.typography.textStyleNoMatchesFound,
-                            )
-                            Spacer(
-                                modifier = Modifier
-                                    .height(FuseCSGOMatchesTheme.dimen.mediumPadding)
-                                    .fillMaxSize()
-                            )
-                            ButtonDialogText(
-                                text = stringResource(id = R.string.retry),
-                                buttonBackground = FuseCSGOMatchesTheme.colorScheme.secondaryContainer
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
                             ) {
-                                viewModel.reduce(MainIntent.LoadMatches)
+                                Icon(
+                                    imageVector = Icons.Filled.ErrorOutline,
+                                    contentDescription = null,
+                                    tint = FuseCSGOMatchesTheme.colorScheme.onError,
+                                    modifier = Modifier.size(FuseCSGOMatchesTheme.dimen.bigLargePadding)
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = error.localizedMessage
+                                        ?: stringResource(id = R.string.error_loading_matches),
+                                    color = FuseCSGOMatchesTheme.colorScheme.onError,
+                                    textAlign = TextAlign.Center,
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                                Spacer(
+                                    modifier = Modifier
+                                        .height(FuseCSGOMatchesTheme.dimen.mediumPadding)
+                                        .fillMaxSize()
+                                )
+                                Text(
+                                    stringResource(id = R.string.please_try_to_refresh_the_page),
+                                    color = FuseCSGOMatchesTheme.colorScheme.onBackground,
+                                    style = FuseCSGOMatchesTheme.typography.textStyleNoMatchesFound,
+                                )
+                                Spacer(
+                                    modifier = Modifier
+                                        .height(FuseCSGOMatchesTheme.dimen.mediumPadding)
+                                        .fillMaxSize()
+                                )
+                                ButtonDialogText(
+                                    text = stringResource(id = R.string.retry),
+                                    buttonBackground = FuseCSGOMatchesTheme.colorScheme.secondaryContainer
+                                ) {
+                                    viewModel.reduce(MainIntent.LoadMatches)
+                                }
                             }
                         }
-                    } else {
-                        MainScreenContent(
-                            matches = matchesLazyItems,
-                            onIntent = viewModel::reduce
-                        )
+                    }
+
+                    is LoadState.NotLoading -> {
+                        if (matchesLazyItems.itemCount == 0 && matchesLazyItems.loadState.append.endOfPaginationReached) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(FuseCSGOMatchesTheme.dimen.mediumPadding),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+                                Text(
+                                    stringResource(id = R.string.no_matches_found),
+                                    color = FuseCSGOMatchesTheme.colorScheme.onBackground,
+                                    style = FuseCSGOMatchesTheme.typography.textStyleNoMatchesFound,
+                                )
+                                Spacer(
+                                    modifier = Modifier
+                                        .height(FuseCSGOMatchesTheme.dimen.mediumPadding)
+                                        .fillMaxSize()
+                                )
+                                Text(
+                                    stringResource(id = R.string.please_try_to_refresh_the_page),
+                                    color = FuseCSGOMatchesTheme.colorScheme.onBackground,
+                                    style = FuseCSGOMatchesTheme.typography.textStyleNoMatchesFound,
+                                )
+                                Spacer(
+                                    modifier = Modifier
+                                        .height(FuseCSGOMatchesTheme.dimen.mediumPadding)
+                                        .fillMaxSize()
+                                )
+                                ButtonDialogText(
+                                    text = stringResource(id = R.string.retry),
+                                    buttonBackground = FuseCSGOMatchesTheme.colorScheme.secondaryContainer
+                                ) {
+                                    viewModel.reduce(MainIntent.LoadMatches)
+                                }
+                            }
+                        } else {
+                            MainScreenContent(
+                                matches = matchesLazyItems,
+                                onIntent = viewModel::reduce
+                            )
+                        }
                     }
                 }
             }
@@ -321,19 +397,12 @@ fun MainScreenContent(
                 bottom = FuseCSGOMatchesTheme.dimen.noPadding
             )
     ) {
-        Text(
-            modifier = Modifier.padding(
-                bottom = FuseCSGOMatchesTheme.dimen.mediumPadding
-            ),
-            text = stringResource(id = R.string.matches_title),
-            style = FuseCSGOMatchesTheme.typography.textStyleMainScreenTitle,
-        )
         LazyVerticalGrid(
             modifier = Modifier.fillMaxSize(),
             columns = columns,
             contentPadding = PaddingValues(bottom = FuseCSGOMatchesTheme.dimen.mediumPadding),
-            verticalArrangement = Arrangement.spacedBy(FuseCSGOMatchesTheme.dimen.cardsPaddingMain),
-            horizontalArrangement = Arrangement.spacedBy(FuseCSGOMatchesTheme.dimen.cardsPaddingMain)
+            verticalArrangement = Arrangement.spacedBy(FuseCSGOMatchesTheme.dimen.mediumLargePadding),
+            horizontalArrangement = Arrangement.spacedBy(FuseCSGOMatchesTheme.dimen.mediumLargePadding)
         ) {
             items(
                 count = matches.itemCount, key = matches.itemKey { it.id ?: 0 }) { index ->
@@ -429,19 +498,12 @@ private fun MainScreenContentPreview(
                 bottom = FuseCSGOMatchesTheme.dimen.noPadding
             )
     ) {
-        Text(
-            modifier = Modifier.padding(
-                bottom = FuseCSGOMatchesTheme.dimen.mediumPadding
-            ),
-            text = stringResource(id = R.string.matches_title),
-            style = FuseCSGOMatchesTheme.typography.textStyleMainScreenTitle,
-        )
         LazyVerticalGrid(
             modifier = Modifier.fillMaxSize(),
             columns = columns,
             contentPadding = PaddingValues(bottom = FuseCSGOMatchesTheme.dimen.mediumPadding),
-            verticalArrangement = Arrangement.spacedBy(FuseCSGOMatchesTheme.dimen.cardsPaddingMain),
-            horizontalArrangement = Arrangement.spacedBy(FuseCSGOMatchesTheme.dimen.cardsPaddingMain)
+            verticalArrangement = Arrangement.spacedBy(FuseCSGOMatchesTheme.dimen.mediumLargePadding),
+            horizontalArrangement = Arrangement.spacedBy(FuseCSGOMatchesTheme.dimen.mediumLargePadding)
         ) {
             items(items = matches, key = { it.id ?: 0 }) { match ->
                 MatchCard(match = match, onIntent = onIntent)
@@ -603,6 +665,19 @@ fun MatchCard(match: MatchDto, onIntent: ((MainIntent) -> Unit)? = null) {
                     )
                     Text(
                         text = leagueAndSeries,
+                        style = FuseCSGOMatchesTheme.typography.textStyleLeagueAndSeries
+                    )
+                    Spacer(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                    )
+                    val videogameTitle = stringResource(
+                        R.string.videogame_title, match.videogameTitle?.name
+                            ?: stringResource(R.string.not_available_short)
+                    )
+                    Text(
+                        text = videogameTitle,
                         style = FuseCSGOMatchesTheme.typography.textStyleLeagueAndSeries
                     )
                 }

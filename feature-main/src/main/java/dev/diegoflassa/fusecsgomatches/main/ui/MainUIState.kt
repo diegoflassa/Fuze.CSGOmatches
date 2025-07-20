@@ -7,6 +7,9 @@ import kotlinx.coroutines.flow.emptyFlow
 
 data class MainUIState(
     val matchesFlow: Flow<PagingData<MatchDto>> = emptyFlow(),
+    val onlyFutureGames: Boolean = true,
+    val games: List<Pair<String, Boolean>> = emptyList(),
+    val selectedGames: Set<String> = setOf(),
     val isLoading: Boolean = false,
     val error: String? = null
 )

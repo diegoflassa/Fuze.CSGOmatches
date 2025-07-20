@@ -13,4 +13,8 @@
     <string name="voltar">Voltar</string>
     <string name="not_available_short">N/D</string>
     <string name="scheduled_today">Hoje, %1$s</string>
+    <string name="apply">Aplicar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="search_future_events">Buscar apenas eventos futuros</string>
+    <string name="games_title">Jogos</string>
 </resources>

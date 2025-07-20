@@ -20,7 +20,9 @@ data class FuseCSGOMatchesDimen(
     val extraBigLargePadding: Dp = 76.dp,
 
     //Specific paddings
-    val cardsPaddingMain: Dp = 24.dp,
+    val mainTopAppBarHeight: Dp = 40.dp,
+    val mainTopAppContentTopPadding: Dp = 24.dp,
+    val mainTopAppContentEndPadding: Dp = 18.dp,
     val horizontalCardsPaddingDetails: Dp = 13.dp,
     val verticalCardsPaddingDetails: Dp = 12.dp,
     val badgeHeight: Dp = 25.dp,

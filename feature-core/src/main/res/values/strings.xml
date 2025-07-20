@@ -15,4 +15,8 @@
     <string name="voltar">Back</string>
     <string name="not_available_short">N/A</string>
     <string name="scheduled_today">Today, %1$s</string>
+    <string name="apply">Apply</string>
+    <string name="cancel">Cancel</string>
+    <string name="search_future_events">Search only future events</string>
+    <string name="games_title">Games</string>
 </resources>

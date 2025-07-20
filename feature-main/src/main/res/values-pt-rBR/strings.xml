@@ -13,4 +13,5 @@
     <string name="alert">Alerta</string>
     <string name="please_try_to_refresh_the_page">Por favor, tente atualizar a página</string>
     <string name="refresh">Atualizar</string>
+    <string name="apply_filter_description">Aplicar filtro</string>
 </resources>

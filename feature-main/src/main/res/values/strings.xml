@@ -14,4 +14,6 @@
     <string name="alert">Alert</string>
     <string name="please_try_to_refresh_the_page">Please, try to refresh the page</string>
     <string name="refresh">Refresh</string>
+    <string name="apply_filter_description">Apply filter</string>
+    <string name="videogame_title" translatable="false">Game: %1$s</string>
 </resources>
