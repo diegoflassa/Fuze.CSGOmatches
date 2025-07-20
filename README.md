@@ -1,7 +1,7 @@
 # Fuse CSGO Matches
 
-Fuse CSGO Matches is an Android application that displays a list of Counter-Strike: Global
-Offensive (CS:GO) matches.
+*  Fuse CSGO Matches is an Android application that displays a list of Counter-Strike: Global
+   Offensive (CS:GO) matches.
 
 ## Implemented Features (Brief)
 
@@ -25,8 +25,8 @@ This project showcases a range of modern Android development practices and featu
 
 ## Tech Stack & Architectural Decisions
 
-This project is built using modern Android development practices and libraries.
-Using Android Studio Narwhal | 2025.1.1 Patch 1, and Java 21
+*  This project is built using modern Android development practices and libraries.
+*  Using Android Studio Narwhal | 2025.1.1 Patch 1, and Java 21
 
 ### Core Architecture
 
