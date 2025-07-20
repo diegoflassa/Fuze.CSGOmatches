@@ -8,7 +8,6 @@ import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.diegoflassa.fusecsgomatches.main.data.dto.MatchDto
 import dev.diegoflassa.fusecsgomatches.main.domain.useCases.GetMatchesUseCase
-import dev.diegoflassa.fusecsgomatches.main.domain.useCases.IGetMatchesUseCase
 import dev.diegoflassa.fusecsgomatches.main.ui.MainEffect.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -21,19 +20,22 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val getMatchesUseCase: IGetMatchesUseCase,
-) : ViewModel(), (Set<String>) -> Unit {
+    private val getMatchesUseCase: GetMatchesUseCase,
+) : ViewModel() {
 
     private val pagingConfig =
-        PagingConfig(pageSize = 20, enablePlaceholders = false, initialLoadSize = 40, prefetchDistance = 20)
+        PagingConfig(
+            pageSize = 20,
+            enablePlaceholders = false,
+            initialLoadSize = 40,
+            prefetchDistance = 20
+        )
 
     private val _uiState = MutableStateFlow(MainUIState())
     val uiState = _uiState.asStateFlow()
 
     private val _effect = Channel<MainEffect>()
     val effect = _effect.receiveAsFlow()
-
-    private var filterGames: Set<String> = setOf()
 
     fun reduce(intent: MainIntent) {
         viewModelScope.launch {
@@ -49,7 +51,6 @@ class MainViewModel @Inject constructor(
                 }
 
                 is MainIntent.ApplyFilter -> {
-                    filterGames = intent.selectedGames
                     _uiState.update {
                         uiState.value.copy(
                             onlyFutureGames = intent.onlyFutureEvents
@@ -80,8 +81,6 @@ class MainViewModel @Inject constructor(
                 getMatchesUseCase(
                     pagingConfig = pagingConfig,
                     onlyFutureGames = uiState.value.onlyFutureGames,
-                    selectedGames = filterGames,
-                    onGamesDiscovered = this@MainViewModel
                 ).cachedIn(viewModelScope)
 
             _uiState.update {
@@ -96,39 +95,6 @@ class MainViewModel @Inject constructor(
                     error = e.localizedMessage ?: "Failed to load matches",
                     isLoading = false
                 )
-            }
-        }
-    }
-
-    override fun invoke(discoveredGameNames: Set<String>) {
-        _uiState.update { currentState ->
-            if (currentState.games.isEmpty()) {
-                val initialGamePairs = discoveredGameNames.map { gameName ->
-                    val isSelected = gameName.lowercase().let { lowercasedName ->
-                        lowercasedName.contains("counter") ||
-                                lowercasedName.contains("strike") ||
-                                lowercasedName.contains("cs")
-                    }
-                    Pair(gameName, isSelected)
-                }
-                if (initialGamePairs.isNotEmpty()) {
-                    currentState.copy(games = initialGamePairs)
-                } else {
-                    currentState
-                }
-            } else {
-                val currentGamesList = currentState.games
-                val existingGameNames = currentGamesList.map { it.first }.toSet()
-
-                val newGamePairs = discoveredGameNames
-                    .filterNot { discoveredName -> existingGameNames.contains(discoveredName) }
-                    .map { newName -> Pair(newName, false) }
-
-                if (newGamePairs.isNotEmpty()) {
-                    currentState.copy(games = currentGamesList + newGamePairs)
-                } else {
-                    currentState
-                }
             }
         }
     }

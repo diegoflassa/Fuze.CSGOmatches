@@ -1,31 +1,18 @@
 package dev.diegoflassa.fusecsgomatches.core.ui
 
-import android.app.AlertDialog
-import android.app.Dialog
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.Card
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,9 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import dev.diegoflassa.fusecsgomatches.core.R
 import dev.diegoflassa.fusecsgomatches.core.extensions.copy
@@ -447,39 +432,21 @@ fun ButtonDialogCancel(modifier: Modifier = Modifier, onClick: (() -> Unit)? = n
     )
 }
 
-data class CheckboxListItem(
-    val id: String,
-    val text: String,
-    val isChecked: MutableState<Boolean>
-)
-
 @Composable
 fun filterDialog(
     onDismissRequest: () -> Unit = {},
-    onFilter: (onlyFutureEvents: Boolean, selectedItems: Set<String>) -> Unit = { _, _ -> },
+    onFilter: (onlyFutureEvents: Boolean) -> Unit = { _ -> },
     dialogTitle: String = "Filters",
     futureEventsSwitchText: String = stringResource(R.string.search_future_events),
     onlyFutureGames: Boolean = true,
-    games: List<Pair<String, Boolean>> = emptyList()
 ): DialogState {
 
     var onlyFutureGamesState by remember { mutableStateOf(onlyFutureGames) }
-
-    val selectableItems = remember(games) {
-        games.map { pair ->
-            CheckboxListItem(
-                id = pair.first,
-                text = pair.first,
-                isChecked = mutableStateOf(pair.second)
-            )
-        }
-    }
 
     val dialogBody: @Composable () -> Unit = {
         SettingsBody(
             futureEventsValue = onlyFutureGamesState,
             onFutureEventsChange = { newValue -> onlyFutureGamesState = newValue },
-            items = selectableItems,
             futureEventsText = futureEventsSwitchText
         )
     }
@@ -495,10 +462,7 @@ fun filterDialog(
         }
         .confirmButton {
             ButtonDialogText(text = stringResource(R.string.apply)) {
-                val selectedIds = selectableItems
-                    .filter { it.isChecked.value }
-                    .map { it.text }.toSet()
-                onFilter.invoke(onlyFutureGamesState, selectedIds)
+                onFilter.invoke(onlyFutureGamesState)
                 onDismissRequest()
             }
         }
@@ -509,19 +473,23 @@ fun filterDialog(
 private fun SettingsBody(
     futureEventsValue: Boolean,
     onFutureEventsChange: (Boolean) -> Unit,
-    items: List<CheckboxListItem>,
     futureEventsText: String
 ) {
     Column(
         modifier = Modifier
-            .padding(start = 24.dp, end = 24.dp, top = 20.dp, bottom = 8.dp)
+            .padding(
+                start = FuseCSGOMatchesTheme.dimen.mediumLargePadding,
+                end = FuseCSGOMatchesTheme.dimen.mediumLargePadding,
+                top = FuseCSGOMatchesTheme.dimen.mediumPadding,
+                bottom = FuseCSGOMatchesTheme.dimen.smallPadding
+            )
             .fillMaxWidth()
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp)
+                .padding(bottom = FuseCSGOMatchesTheme.dimen.mediumPadding)
         ) {
             Text(
                 text = futureEventsText,
@@ -534,38 +502,6 @@ private fun SettingsBody(
             )
         }
 
-        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-
-        Text(
-            text = stringResource(R.string.games_title),
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
-        LazyColumn(
-            modifier = Modifier
-                .heightIn(max = 200.dp)
-                .fillMaxWidth()
-        ) {
-            items(items) { item ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp)
-                ) {
-                    Checkbox(
-                        checked = item.isChecked.value,
-                        onCheckedChange = { item.isChecked.value = it }
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Text(
-                        text = item.text, // Display text from CheckboxListItem
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
-        }
     }
 }
 
@@ -575,14 +511,8 @@ fun FilterDialogPreview() {
     FuseCSGOMatchesThemeContent {
         val dialogState = filterDialog(
             onDismissRequest = {},
-            onFilter = { _, _ -> },
+            onFilter = { _ -> },
             dialogTitle = "Filter Events Preview",
-            games = listOf(
-                Pair("Major Championships", false),
-                Pair("Qualifiers", true),
-                Pair("Online Leagues", false),
-                Pair("LAN Finals", false)
-            )
         )
         dialogState.ExibirDialog()
     }

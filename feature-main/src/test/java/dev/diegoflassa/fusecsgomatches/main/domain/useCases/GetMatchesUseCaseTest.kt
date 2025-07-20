@@ -19,7 +19,7 @@ import java.net.HttpURLConnection
 class GetMatchesUseCaseTest {
 
     private lateinit var fakeRepository: FakeMatchesRepository
-    private lateinit var useCase: GetMatchesUseCase
+    private lateinit var useCase: IGetMatchesUseCase
 
     private val pagingConfig = PagingConfig(pageSize = 10)
 
@@ -169,7 +169,7 @@ class GetMatchesUseCaseTest {
         var returnNullBody = false
         var returnError = false
 
-        override suspend fun getMatches(page: Int, pageSize: Int): Response<List<MatchDto>> {
+        override suspend fun getMatches(page: Int, pageSize: Int,beginAt: String): Response<List<MatchDto>> {
             if (throwIOException) throw IOException("Network error")
             if (throwHttpException) throw HttpException(
                 Response.error<List<MatchDto>>(

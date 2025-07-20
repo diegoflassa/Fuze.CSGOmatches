@@ -15,8 +15,6 @@ class GetMatchesUseCase @Inject constructor(
     override operator fun invoke(
         pagingConfig: PagingConfig,
         onlyFutureGames: Boolean,
-        selectedGames: Set<String>,
-        onGamesDiscovered: ((games: Set<String>) -> Unit)?
     ): Flow<PagingData<MatchDto>> {
         return Pager(
             config = pagingConfig,
@@ -24,8 +22,6 @@ class GetMatchesUseCase @Inject constructor(
                 MatchesPagingSource(
                     matchesRepository = matchesRepository,
                     onlyFutureGames = onlyFutureGames,
-                    selectedGames = selectedGames,
-                    onGamesDiscovered = onGamesDiscovered
                 )
             }
         ).flow

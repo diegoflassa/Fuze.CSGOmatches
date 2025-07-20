@@ -16,6 +16,7 @@ junit = "4.13.2"
 io-mockk = "1.14.5"
 org-jetbrains-kotlinx-coroutines-test = "1.10.2"
 app-cash-turbine = "1.2.1"
+ax-paging-testing = "3.3.6"
 
 #Instrumented Tests
 ax-test-ext-junit-ktx = "1.2.1"
@@ -93,6 +94,7 @@ junit = { module = "junit:junit", version.ref = "junit" }
 io-mockk = { module = "io.mockk:mockk", version.ref = "io-mockk" }
 org-jetbrains-kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "org-jetbrains-kotlinx-coroutines-test" }
 app-cash-turbine = { module = "app.cash.turbine:turbine", version.ref = "app-cash-turbine" }
+ax-paging-testing = { module = "androidx.paging:paging-testing", version.ref = "ax-paging-testing" }
 
 #Instrumented Tests
 ax-test-ext-junit-ktx = { module = "androidx.test.ext:junit-ktx", version.ref = "ax-test-ext-junit-ktx" }

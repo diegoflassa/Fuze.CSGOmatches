@@ -5,7 +5,6 @@ sealed class MainIntent {
     object ShowFilter : MainIntent()
     data class ApplyFilter(
         val onlyFutureEvents: Boolean,
-        val selectedGames: Set<String>
     ) : MainIntent()
 
     data class OnMatchClicked(

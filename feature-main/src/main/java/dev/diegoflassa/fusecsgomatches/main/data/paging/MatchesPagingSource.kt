@@ -1,5 +1,6 @@
 package dev.diegoflassa.fusecsgomatches.main.data.paging
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import dev.diegoflassa.fusecsgomatches.core.data.enums.MatchStatus
@@ -8,15 +9,12 @@ import dev.diegoflassa.fusecsgomatches.main.data.repository.interfaces.IMatchesR
 import retrofit2.HttpException
 import java.io.IOException
 import java.time.Instant
-import java.util.Locale
-
-private const val STARTING_PAGE_INDEX = 1
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class MatchesPagingSource(
     private val matchesRepository: IMatchesRepository,
-    private var onlyFutureGames: Boolean = true,
-    private var selectedGames: Set<String> = setOf(),
-    private var onGamesDiscovered: ((games: Set<String>) -> Unit)? = null
+    private val onlyFutureGames: Boolean = true,
 ) : PagingSource<Int, MatchDto>() {
 
     override suspend fun load(
@@ -26,41 +24,21 @@ class MatchesPagingSource(
         val currentLoadSize = params.loadSize
 
         return try {
+            val beginAt = if (onlyFutureGames) {
+                getCurrentDateAsString()
+            } else {
+                ""
+            }
+
             val response = matchesRepository.getMatches(
                 page = pageNumber,
-                pageSize = currentLoadSize
+                pageSize = currentLoadSize,
+                beginAt = beginAt
             )
 
-            val allMatchesOnPage = response.body() ?: emptyList()
-            val gamesDiscoveredOnThisPage: MutableSet<String> = mutableSetOf()
-            val currentMoment = Instant.now()
+            val allMatchesFromApi = response.body() ?: emptyList()
 
-            val matchesAfterGameFilter = allMatchesOnPage.filter { match ->
-                val videogameTitleName =
-                    match.videogameTitle?.name?.lowercase(Locale.getDefault())
-                gamesDiscoveredOnThisPage.add(videogameTitleName ?: "N/A")
-
-                if (selectedGames.isNotEmpty()) {
-                    if (selectedGames.contains("N/A")) {
-                        selectedGames.contains(videogameTitleName) || (videogameTitleName?.isEmpty() == true)
-                    } else {
-                        selectedGames.contains(videogameTitleName)
-                    }
-                } else {
-                    true
-                }
-            }
-
-            val matchesAfterFutureFilter = matchesAfterGameFilter.filter { match ->
-                if (onlyFutureGames) {
-                    val matchTime = match.beginAt ?: match.scheduledAt
-                    matchTime != null && !matchTime.isBefore(currentMoment)
-                } else {
-                    true
-                }
-            }
-
-            val finalSortedMatches = matchesAfterFutureFilter.sortedWith(
+            val finalSortedMatches = allMatchesFromApi.sortedWith(
                 compareBy<MatchDto> { match ->
                     when (match.status) {
                         MatchStatus.IN_PROGRESS -> 0
@@ -75,12 +53,8 @@ class MatchesPagingSource(
                 }
             )
 
-            if (gamesDiscoveredOnThisPage.isNotEmpty()) {
-                onGamesDiscovered?.invoke(gamesDiscoveredOnThisPage)
-            }
-
             if (response.isSuccessful) {
-                val isLastPageFromAPI = allMatchesOnPage.size < currentLoadSize
+                val isLastPageFromAPI = allMatchesFromApi.size < currentLoadSize
 
                 val nextKey = if (isLastPageFromAPI) {
                     null
@@ -93,6 +67,9 @@ class MatchesPagingSource(
                 } else {
                     pageNumber - 1
                 }
+
+                Log.d("MatchesPagingSource", "Run")
+
                 LoadResult.Page(
                     data = finalSortedMatches,
                     prevKey = prevKey,
@@ -105,7 +82,15 @@ class MatchesPagingSource(
             LoadResult.Error(e)
         } catch (e: HttpException) {
             LoadResult.Error(e)
+        } catch (e: Exception) {
+            LoadResult.Error(e)
         }
+    }
+
+    private fun getCurrentDateAsString(): String {
+        val currentDate: LocalDate = LocalDate.now()
+        val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        return currentDate.format(formatter)
     }
 
     override fun getRefreshKey(state: PagingState<Int, MatchDto>): Int? {
@@ -113,5 +98,9 @@ class MatchesPagingSource(
             state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
                 ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
         }
+    }
+
+    companion object {
+        const val STARTING_PAGE_INDEX = 1
     }
 }

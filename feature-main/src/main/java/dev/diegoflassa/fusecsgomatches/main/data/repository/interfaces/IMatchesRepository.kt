@@ -10,6 +10,7 @@ interface IMatchesRepository {
 
     suspend fun getMatches(
         page: Int,
-        pageSize: Int
+        pageSize: Int,
+        beginAt: String
     ): Response<List<MatchDto>>
 }

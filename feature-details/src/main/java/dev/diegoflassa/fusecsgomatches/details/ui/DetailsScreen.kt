@@ -60,7 +60,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.core.net.toUri
@@ -362,8 +361,8 @@ fun TeamSection(team: OpponentTeamDetailDto, mirrorPlayers: Boolean = false) {
     val screenWidthDp = with(density) { screenWidthPx.toDp() }
 
     val columns = when {
-        screenWidthDp >= 840.dp -> GridCells.Fixed(3)
-        screenWidthDp >= 600.dp -> GridCells.Fixed(2)
+        screenWidthDp >= FuseCSGOMatchesTheme.dimen.tabletWidth -> GridCells.Fixed(3)
+        screenWidthDp >= FuseCSGOMatchesTheme.dimen.foldableWidth -> GridCells.Fixed(2)
         else -> GridCells.Fixed(1)
     }
     Column(
@@ -384,8 +383,8 @@ fun TeamSection(team: OpponentTeamDetailDto, mirrorPlayers: Boolean = false) {
         } else {
             LazyVerticalGrid(
                 columns = columns,
-                verticalArrangement = Arrangement.spacedBy(FuseCSGOMatchesTheme.dimen.verticalCardsPaddingDetails),
-                horizontalArrangement = Arrangement.spacedBy(FuseCSGOMatchesTheme.dimen.horizontalCardsPaddingDetails),
+                verticalArrangement = Arrangement.spacedBy(FuseCSGOMatchesTheme.dimen.detailsVerticalCardsPadding),
+                horizontalArrangement = Arrangement.spacedBy(FuseCSGOMatchesTheme.dimen.detailsHorizontalCardsPadding),
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(
@@ -420,7 +419,7 @@ private fun TeamsInfo(
 
         val team1ImageUrl = teamA?.imageUrl
         val team2ImageUrl = teamB?.imageUrl
-        val teamDisplayVsPadding = 20.dp
+        val teamDisplayVsPadding = FuseCSGOMatchesTheme.dimen.detailsTeamImageVsPadding
 
         TeamDisplay(
             modifier = Modifier
@@ -488,10 +487,10 @@ fun TeamDisplay(
             contentDescription = stringResource(R.string.team_logo_desc, name),
             contentScale = ContentScale.Fit,
             modifier = Modifier
-                .size(60.dp)
+                .size(FuseCSGOMatchesTheme.dimen.teamDisplayImageSize)
                 .clip(CircleShape)
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(FuseCSGOMatchesTheme.dimen.teamDisplaySpacerHeight))
         Text(
             text = name,
             style = FuseCSGOMatchesTheme.typography.textStyleMainScreenTeamName,
@@ -510,23 +509,23 @@ fun PlayerCard(
 ) {
     Box(
         modifier = Modifier
-            .height(58.dp)
-            .width(174.dp)
+            .width(FuseCSGOMatchesTheme.dimen.detailsPlayerCardWidth)
+            .height(FuseCSGOMatchesTheme.dimen.detailsPlayerCardTotalHeight)
             .background(FuseCSGOMatchesColors.transparent)
     ) {
         AsyncImage(
             modifier = Modifier
                 .align(if (mirrorHorizontally) Alignment.TopStart else Alignment.TopEnd)
                 .padding(
-                    start = if (mirrorHorizontally) FuseCSGOMatchesTheme.dimen.detailsPlayerImageHorizontalPadding else 0.dp,
-                    end = if (mirrorHorizontally) 0.dp else FuseCSGOMatchesTheme.dimen.detailsPlayerImageHorizontalPadding,
+                    start = if (mirrorHorizontally) FuseCSGOMatchesTheme.dimen.detailsPlayerImageHorizontalPadding else FuseCSGOMatchesTheme.dimen.noPadding,
+                    end = if (mirrorHorizontally) FuseCSGOMatchesTheme.dimen.noPadding else FuseCSGOMatchesTheme.dimen.detailsPlayerImageHorizontalPadding,
                 )
                 .size(FuseCSGOMatchesTheme.dimen.detailsPlayerImageSize)
                 .background(
                     FuseCSGOMatchesTheme.colorScheme.surfaceContainer.copy(alpha = 0.5f),
-                    shape = RoundedCornerShape(size = 8.dp)
+                    shape = RoundedCornerShape(size = FuseCSGOMatchesTheme.dimen.smallPadding)
                 )
-                .clip(RoundedCornerShape(size = 8.dp))
+                .clip(RoundedCornerShape(size = FuseCSGOMatchesTheme.dimen.smallPadding))
                 .zIndex(1f),
             model = ImageRequest.Builder(LocalContext.current)
                 .data(player?.imageUrl)
@@ -545,20 +544,20 @@ fun PlayerCard(
         Card(
             modifier = Modifier
                 .align(if (mirrorHorizontally) Alignment.BottomEnd else Alignment.BottomStart)
-                .height(54.dp)
+                .height(FuseCSGOMatchesTheme.dimen.detailsPlayerCardHeight)
                 .fillMaxWidth(),
             colors = CardDefaults.cardColors(containerColor = FuseCSGOMatchesTheme.colorScheme.surfaceContainerHighest),
             shape = if (mirrorHorizontally) {
                 RoundedCornerShape(
                     topStart = FuseCSGOMatchesTheme.dimen.mediumPadding,
                     bottomStart = FuseCSGOMatchesTheme.dimen.mediumPadding,
-                    topEnd = 0.dp,
-                    bottomEnd = 0.dp
+                    topEnd = FuseCSGOMatchesTheme.dimen.noPadding,
+                    bottomEnd = FuseCSGOMatchesTheme.dimen.noPadding
                 )
             } else {
                 RoundedCornerShape(
-                    topStart = 0.dp,
-                    bottomStart = 0.dp,
+                    topStart = FuseCSGOMatchesTheme.dimen.noPadding,
+                    bottomStart = FuseCSGOMatchesTheme.dimen.noPadding,
                     topEnd = FuseCSGOMatchesTheme.dimen.mediumPadding,
                     bottomEnd = FuseCSGOMatchesTheme.dimen.mediumPadding
                 )
@@ -584,8 +583,8 @@ fun PlayerCard(
                     modifier = Modifier
                         .weight(1f)
                         .padding(
-                            start = if (mirrorHorizontally) 0.dp else FuseCSGOMatchesTheme.dimen.smallPadding,
-                            end = if (mirrorHorizontally) FuseCSGOMatchesTheme.dimen.smallPadding else 0.dp,
+                            start = if (mirrorHorizontally) FuseCSGOMatchesTheme.dimen.noPadding else FuseCSGOMatchesTheme.dimen.smallPadding,
+                            end = if (mirrorHorizontally) FuseCSGOMatchesTheme.dimen.smallPadding else FuseCSGOMatchesTheme.dimen.noPadding,
                             top = FuseCSGOMatchesTheme.dimen.detailsNicknameTopPadding,
                             bottom = FuseCSGOMatchesTheme.dimen.smallPadding
                         ),
@@ -600,7 +599,7 @@ fun PlayerCard(
                     )
                     Spacer(
                         modifier = Modifier
-                            .height(2.dp)
+                            .height(FuseCSGOMatchesTheme.dimen.detailsPlayerCardSpacerHeight)
                             .fillMaxWidth()
                     )
                     val realName = ("${player?.firstName ?: ""} ${player?.lastName ?: ""}").trim()

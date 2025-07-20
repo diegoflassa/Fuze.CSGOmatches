@@ -14,9 +14,11 @@ class MatchesRepository @Inject constructor(
 
     override suspend fun getMatches(
         page: Int,
-        pageSize: Int
+        pageSize: Int,
+        beginAt: String
     ): Response<List<MatchDto>> {
-        val ret = pandaMatchesApiService.getMatches(page, pageSize)
+        val ret =
+            pandaMatchesApiService.getMatches(page = page, pageSize = pageSize, beginAt = beginAt)
         return ret
     }
 }

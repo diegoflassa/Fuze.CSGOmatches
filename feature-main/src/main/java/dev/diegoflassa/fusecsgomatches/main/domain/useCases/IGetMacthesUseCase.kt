@@ -8,8 +8,6 @@ import kotlinx.coroutines.flow.Flow
 interface IGetMatchesUseCase {
     operator fun invoke(
         pagingConfig: PagingConfig,
-        onlyFutureGames: Boolean = true,
-        selectedGames: Set<String> = setOf(),
-        onGamesDiscovered: ((games: Set<String>) -> Unit)? = null
+        onlyFutureGames: Boolean = true
     ): Flow<PagingData<MatchDto>>
 }
