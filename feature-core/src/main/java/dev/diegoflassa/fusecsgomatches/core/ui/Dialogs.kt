@@ -141,7 +141,7 @@ open class DialogState(
     val onDismissRequest: (() -> Unit)? = null,
     val confirmButton: @Composable (() -> Unit)? = null,
     val modifier: Modifier? = null,
-    val body: @Composable (() -> Unit)? = null, // Added body property
+    val body: @Composable (() -> Unit)? = null,
     val dismissButton: @Composable (() -> Unit)? = null,
     val icon: @Composable (() -> Unit)? = null,
     val title: @Composable (() -> Unit)? = null,
@@ -159,7 +159,7 @@ open class DialogState(
         private var onDismissRequest: (() -> Unit)? = null
         private var confirmButton: @Composable (() -> Unit)? = null
         private var modifier: Modifier? = null
-        private var body: @Composable (() -> Unit)? = null // Added body property
+        private var body: @Composable (() -> Unit)? = null
         private var dismissButton: @Composable (() -> Unit)? = null
         private var icon: @Composable (() -> Unit)? = null
         private var title: @Composable (() -> Unit)? = null
@@ -187,7 +187,7 @@ open class DialogState(
             return this
         }
 
-        fun body(body: @Composable () -> Unit): Builder { // Added body method
+        fun body(body: @Composable () -> Unit): Builder {
             this.body = body
             return this
         }
@@ -261,7 +261,7 @@ open class DialogState(
             onDismissRequest = onDismissRequest,
             confirmButton = confirmButton,
             modifier = modifier,
-            body = body, // Added body to constructor call
+            body = body,
             dismissButton = dismissButton,
             icon = icon,
             title = title,
@@ -287,7 +287,7 @@ open class DialogState(
             dismissButton = dismissButton ?: {},
             icon = icon,
             title = title,
-            text = body ?: text, // MODIFIED: Use custom body or fallback to text
+            text = body ?: text,
             shape = shape ?: AlertDialogDefaults.shape,
             containerColor = containerColor ?: FuseCSGOMatchesTheme.colorScheme.secondaryContainer,
             iconContentColor = iconContentColor
@@ -542,11 +542,9 @@ private fun SettingsBody(
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
-        // Scrollable list of Checkboxes
         LazyColumn(
             modifier = Modifier
-                // .weight(1f, fill = false) // May not be needed if Dialog auto-sizes, or use heightIn
-                .heightIn(max = 200.dp) // Set a max height for the scrollable area
+                .heightIn(max = 200.dp)
                 .fillMaxWidth()
         ) {
             items(items) { item ->

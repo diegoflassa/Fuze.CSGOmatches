@@ -11,16 +11,13 @@ import javax.inject.Inject
 
 class GetMatchesUseCase @Inject constructor(
     private val matchesRepository: IMatchesRepository
-) {
-    operator fun invoke(
+) : IGetMatchesUseCase {
+    override operator fun invoke(
         pagingConfig: PagingConfig,
         onlyFutureGames: Boolean,
-        selectedGames: Set<String> = setOf(),
+        selectedGames: Set<String>,
         onGamesDiscovered: ((games: Set<String>) -> Unit)?
     ): Flow<PagingData<MatchDto>> {
-        //matchesPagingSource.setOnlyFutureEvents(onlyFutureGames)
-        //matchesPagingSource.setSelectedGames(selectedGames)
-        //matchesPagingSource.setOnGamesDiscovered(onGamesDiscovered)
         return Pager(
             config = pagingConfig,
             pagingSourceFactory = {
@@ -28,7 +25,7 @@ class GetMatchesUseCase @Inject constructor(
                     matchesRepository = matchesRepository,
                     onlyFutureGames = onlyFutureGames,
                     selectedGames = selectedGames,
-                    onGamesDiscovered = onGamesDiscovered ?: { _ -> /* No-op default */ }
+                    onGamesDiscovered = onGamesDiscovered
                 )
             }
         ).flow

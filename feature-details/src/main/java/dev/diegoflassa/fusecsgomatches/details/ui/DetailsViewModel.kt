@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.diegoflassa.fusecsgomatches.core.domain.model.DomainResult
 import dev.diegoflassa.fusecsgomatches.details.domain.useCases.GetOpponentsUseCase
+import dev.diegoflassa.fusecsgomatches.details.domain.useCases.IGetOpponentsUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
-    private val getOpponentsUseCase: GetOpponentsUseCase, // Changed from IOpponentsRepository
+    private val getOpponentsUseCase: IGetOpponentsUseCase,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 

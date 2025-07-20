@@ -19,19 +19,6 @@ class MatchesPagingSource(
     private var onGamesDiscovered: ((games: Set<String>) -> Unit)? = null
 ) : PagingSource<Int, MatchDto>() {
 
-
-    fun setOnlyFutureEvents(onlyFutureGames: Boolean) {
-        this.onlyFutureGames = onlyFutureGames
-    }
-
-    fun setSelectedGames(selectedGames: Set<String>) {
-        this.selectedGames = selectedGames
-    }
-
-    fun setOnGamesDiscovered(onGamesDiscovered: ((games: Set<String>) -> Unit)?) {
-        this.onGamesDiscovered = onGamesDiscovered
-    }
-
     override suspend fun load(
         params: LoadParams<Int>
     ): LoadResult<Int, MatchDto> {
@@ -43,30 +30,37 @@ class MatchesPagingSource(
                 page = pageNumber,
                 pageSize = currentLoadSize
             )
-            val games: MutableSet<String> = mutableSetOf()
+
+            val allMatchesOnPage = response.body() ?: emptyList()
+            val gamesDiscoveredOnThisPage: MutableSet<String> = mutableSetOf()
             val currentMoment = Instant.now()
-            val sortedMatches: List<MatchDto> = response.body()?.filter { match ->
+
+            val matchesAfterGameFilter = allMatchesOnPage.filter { match ->
                 val videogameTitleName =
                     match.videogameTitle?.name?.lowercase(Locale.getDefault())
-                games.add(videogameTitleName ?: "N/A")
-                if (selectedGames.isEmpty().not()) {
+                gamesDiscoveredOnThisPage.add(videogameTitleName ?: "N/A")
+
+                if (selectedGames.isNotEmpty()) {
                     if (selectedGames.contains("N/A")) {
-                        selectedGames.contains(videogameTitleName) ||
-                                (videogameTitleName?.isEmpty() == true)
+                        selectedGames.contains(videogameTitleName) || (videogameTitleName?.isEmpty() == true)
                     } else {
                         selectedGames.contains(videogameTitleName)
                     }
                 } else {
                     true
                 }
-            }?.filter { match ->
+            }
+
+            val matchesAfterFutureFilter = matchesAfterGameFilter.filter { match ->
                 if (onlyFutureGames) {
                     val matchTime = match.beginAt ?: match.scheduledAt
-                    matchTime != null && matchTime.isBefore(currentMoment).not()
+                    matchTime != null && !matchTime.isBefore(currentMoment)
                 } else {
                     true
                 }
-            }?.sortedWith(
+            }
+
+            val finalSortedMatches = matchesAfterFutureFilter.sortedWith(
                 compareBy<MatchDto> { match ->
                     when (match.status) {
                         MatchStatus.IN_PROGRESS -> 0
@@ -79,25 +73,28 @@ class MatchesPagingSource(
                 }.thenBy { match ->
                     match.beginAt ?: match.scheduledAt ?: Instant.MAX
                 }
-            ) ?: emptyList()
+            )
 
-            if (games.isNotEmpty()) {
-                onGamesDiscovered?.invoke(games)
+            if (gamesDiscoveredOnThisPage.isNotEmpty()) {
+                onGamesDiscovered?.invoke(gamesDiscoveredOnThisPage)
             }
 
             if (response.isSuccessful) {
-                val nextKey = if (sortedMatches.isEmpty() || sortedMatches.size < currentLoadSize) {
+                val isLastPageFromAPI = allMatchesOnPage.size < currentLoadSize
+
+                val nextKey = if (isLastPageFromAPI) {
                     null
                 } else {
                     pageNumber + 1
                 }
+
                 val prevKey = if (pageNumber == STARTING_PAGE_INDEX) {
                     null
                 } else {
                     pageNumber - 1
                 }
                 LoadResult.Page(
-                    data = sortedMatches,
+                    data = finalSortedMatches,
                     prevKey = prevKey,
                     nextKey = nextKey
                 )

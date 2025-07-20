@@ -11,8 +11,8 @@ import javax.inject.Inject
 
 class GetOpponentsUseCase @Inject constructor(
     private val opponentsRepository: IOpponentsRepository
-) {
-    operator fun invoke(idOrSlug: String): Flow<DomainResult<OpponentsResponseDto>> = flow {
+): IGetOpponentsUseCase {
+    override operator fun invoke(idOrSlug: String): Flow<DomainResult<OpponentsResponseDto>> = flow {
         try {
             val response = opponentsRepository.getOpponents(idOrSlug)
             if (response.isSuccessful) {

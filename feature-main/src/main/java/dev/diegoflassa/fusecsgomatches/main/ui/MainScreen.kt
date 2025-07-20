@@ -415,14 +415,11 @@ fun MainScreenContent(
             item {
                 when (matches.loadState.append) {
                     is LoadState.Loading -> {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = FuseCSGOMatchesTheme.dimen.mediumPadding),
-                            contentAlignment = Alignment.Center
+/*                        Box(
+                            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
                         ) {
                             CircularProgressIndicator(color = FuseCSGOMatchesTheme.colorScheme.tertiary)
-                        }
+                        }*/
                     }
 
                     is LoadState.Error -> {
@@ -1090,7 +1087,7 @@ private fun sampleMatchesForPreview(count: Int): List<MatchDto> {
 private fun MainScreenContentPreviewPhoneEmpty() {
     FuseCSGOMatchesThemeContent {
         MainScreenContentPreview(
-            matches = emptyList(), onIntent = {})
+            matches = emptyList(), onIntent = { })
     }
 }
 
@@ -1102,7 +1099,7 @@ private fun MainScreenContentPreviewPhoneWithData() {
     FuseCSGOMatchesThemeContent {
         val sampleMatches = sampleMatchesForPreview(10)
         MainScreenContentPreview(
-            matches = sampleMatches, onIntent = {})
+            matches = sampleMatches, onIntent = { })
     }
 }
 
@@ -1114,7 +1111,7 @@ private fun MainScreenContentPreviewFoldableWithData() {
     FuseCSGOMatchesThemeContent {
         val sampleMatches = sampleMatchesForPreview(15)
         MainScreenContentPreview(
-            matches = sampleMatches, onIntent = {})
+            matches = sampleMatches, onIntent = { })
     }
 }
 
@@ -1126,6 +1123,6 @@ private fun MainScreenContentPreviewTabletWithData() {
     FuseCSGOMatchesThemeContent {
         val sampleMatches = sampleMatchesForPreview(20)
         MainScreenContentPreview(
-            matches = sampleMatches, onIntent = {})
+            matches = sampleMatches, onIntent = { })
     }
 }

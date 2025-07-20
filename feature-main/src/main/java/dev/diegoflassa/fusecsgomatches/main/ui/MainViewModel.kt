@@ -8,6 +8,7 @@ import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.diegoflassa.fusecsgomatches.main.data.dto.MatchDto
 import dev.diegoflassa.fusecsgomatches.main.domain.useCases.GetMatchesUseCase
+import dev.diegoflassa.fusecsgomatches.main.domain.useCases.IGetMatchesUseCase
 import dev.diegoflassa.fusecsgomatches.main.ui.MainEffect.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -20,11 +21,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val getMatchesUseCase: GetMatchesUseCase,
+    private val getMatchesUseCase: IGetMatchesUseCase,
 ) : ViewModel(), (Set<String>) -> Unit {
 
     private val pagingConfig =
-        PagingConfig(pageSize = 20, enablePlaceholders = false, initialLoadSize = 40)
+        PagingConfig(pageSize = 20, enablePlaceholders = false, initialLoadSize = 40, prefetchDistance = 20)
 
     private val _uiState = MutableStateFlow(MainUIState())
     val uiState = _uiState.asStateFlow()
