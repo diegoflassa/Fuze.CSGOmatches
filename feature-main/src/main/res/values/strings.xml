@@ -15,4 +15,5 @@
     <string name="please_try_to_refresh_the_page">Please, try to refresh the page</string>
     <string name="apply_filter_description">Apply filter</string>
     <string name="or_try_disable_the_filter">Or, try to disable the \"Search only future events\" in the filter.</string>
+    <string name="ended">Finalizada</string>
 </resources>
