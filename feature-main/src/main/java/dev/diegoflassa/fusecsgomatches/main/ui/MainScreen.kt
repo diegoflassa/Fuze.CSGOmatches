@@ -235,13 +235,22 @@ fun MainScreen(
             isRefreshing = uiState.isLoading,
             onRefresh = { viewModel.reduce(MainIntent.LoadMatches) },
             indicator = {
-                Indicator(
+                Column(
                     modifier = Modifier
                         .zIndex(1f)
-                        .align(Alignment.TopCenter),
-                    state = pullToRefreshState,
-                    isRefreshing = uiState.isLoading
-                )
+                        .align(Alignment.TopCenter)
+                        .background(Color.Blue)
+                        .wrapContentWidth()
+                ) {
+                    Spacer(
+                        modifier = Modifier
+                            .height(FuseCSGOMatchesTheme.dimen.mainRefreshIndicatorTopPadding)
+                    )
+                    Indicator(
+                        state = pullToRefreshState,
+                        isRefreshing = uiState.isLoading
+                    )
+                }
             }
         ) {
             Box(

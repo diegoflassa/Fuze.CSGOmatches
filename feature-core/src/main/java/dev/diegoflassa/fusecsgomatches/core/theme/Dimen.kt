@@ -24,6 +24,7 @@ data class FuseCSGOMatchesDimen(
     val teamDisplaySpacerHeight: Dp = 10.dp,
 
     //Specific paddings
+    val mainRefreshIndicatorTopPadding: Dp = 54.dp,
     val mainTopAppBarHeight: Dp = 40.dp,
     val mainTopAppContentTopPadding: Dp = 24.dp,
     val mainTopAppContentEndPadding: Dp = 18.dp,
