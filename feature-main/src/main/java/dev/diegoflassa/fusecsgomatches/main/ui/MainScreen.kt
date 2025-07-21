@@ -895,7 +895,6 @@ fun ScheduledBadgePreview() {
 fun EndedBadgePreview() {
     FuseCSGOMatchesThemeContent {
         Surface(modifier = Modifier.padding(FuseCSGOMatchesTheme.dimen.smallPadding)) {
-            val formattedText = formatScheduledAt(Instant.now())
             EndedBadge()
         }
     }
