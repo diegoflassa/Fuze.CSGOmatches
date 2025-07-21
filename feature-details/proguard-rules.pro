@@ -29,3 +29,6 @@
     public static int v(...);
     public static int println(...);
 }
+
+-keepattributes Signature,InnerClasses
+-keep class dev.diegoflassa.fusecsgomatches.details.data.dto.** { *; }

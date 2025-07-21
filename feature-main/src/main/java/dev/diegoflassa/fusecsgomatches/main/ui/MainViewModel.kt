@@ -28,7 +28,7 @@ class MainViewModel @Inject constructor(
             pageSize = 20,
             enablePlaceholders = false,
             initialLoadSize = 40,
-            prefetchDistance = 20
+            prefetchDistance = 15
         )
 
     private val _uiState = MutableStateFlow(MainUIState())
