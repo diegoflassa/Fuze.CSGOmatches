@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?><!-- Normally this file would be added to the .gitignore but,
+ as this is a challenge, for convenience, i will commit it to the repository -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="pandascore_key" translatable="false" tools:ignore="UnusedResources">zOs3mxVMileBJuSiZRtT7DrbYqQsrD6oNCOO6YMIHu0_93EFpVg</string>
+</resources>
