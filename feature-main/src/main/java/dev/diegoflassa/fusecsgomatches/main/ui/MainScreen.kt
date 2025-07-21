@@ -35,7 +35,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -94,6 +93,7 @@ import dev.diegoflassa.fusecsgomatches.core.ui.ButtonDialogText
 import dev.diegoflassa.fusecsgomatches.core.ui.DialogManager
 import dev.diegoflassa.fusecsgomatches.core.ui.DialogManagerFactory
 import dev.diegoflassa.fusecsgomatches.core.ui.DialogState
+import dev.diegoflassa.fusecsgomatches.core.ui.SystemCircularLoadingIndicator
 import dev.diegoflassa.fusecsgomatches.core.ui.filterDialog
 import dev.diegoflassa.fusecsgomatches.main.R
 import dev.diegoflassa.fusecsgomatches.main.data.dto.LeagueDto
@@ -260,11 +260,7 @@ fun MainScreen(
             ) {
                 when (val refreshLoadState = matchesLazyItems.loadState.refresh) {
                     is LoadState.Loading -> {
-                        Box(
-                            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(color = FuseCSGOMatchesTheme.colorScheme.tertiary)
-                        }
+                        SystemCircularLoadingIndicator()
                     }
 
                     is LoadState.Error -> {
@@ -422,11 +418,7 @@ fun MainScreenContent(
             item {
                 when (matches.loadState.append) {
                     is LoadState.Loading -> {
-                        Box(
-                            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(color = FuseCSGOMatchesTheme.colorScheme.tertiary)
-                        }
+                        SystemCircularLoadingIndicator()
                     }
 
                     is LoadState.Error -> {
@@ -550,6 +542,11 @@ fun MatchCard(match: MatchDto, onIntent: ((MainIntent) -> Unit)? = null) {
                 })
             } else if (match.status == MatchStatus.SCHEDULED) {
                 ScheduledBadge(modifier = Modifier.constrainAs(topRef) {
+                    top.linkTo(parent.top)
+                    end.linkTo(parent.end)
+                }, text = scheduledDate)
+            } else if (match.status == MatchStatus.ENDED) {
+                ScheduledEnded(modifier = Modifier.constrainAs(topRef) {
                     top.linkTo(parent.top)
                     end.linkTo(parent.end)
                 }, text = scheduledDate)
@@ -848,6 +845,30 @@ fun ScheduledBadge(text: String, modifier: Modifier = Modifier) {
     }
 }
 
+@Composable
+fun ScheduledEnded(text: String, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .sizeIn(minWidth = FuseCSGOMatchesTheme.dimen.mainBadgeMinWidth)
+            .height(FuseCSGOMatchesTheme.dimen.mainBadgeHeight)
+            .wrapContentWidth()
+            .clip(FuseCSGOMatchesTheme.shapes.agora)
+            .background(FuseCSGOMatchesTheme.colorScheme.onErrorContainer)
+            .padding(
+                horizontal = FuseCSGOMatchesTheme.dimen.smallMediumPadding,
+                FuseCSGOMatchesTheme.dimen.mainBadgeVerticalPadding
+            )
+    ) {
+        Text(
+            modifier = Modifier
+                .wrapContentSize()
+                .padding(top = FuseCSGOMatchesTheme.dimen.mainBadgeTextTopPadding),
+            text = text,
+            style = FuseCSGOMatchesTheme.typography.textStyleEnded,
+        )
+    }
+}
+
 @Preview
 @Composable
 fun NowBadgePreview() {
@@ -865,6 +886,17 @@ fun ScheduledBadgePreview() {
         Surface(modifier = Modifier.padding(FuseCSGOMatchesTheme.dimen.smallPadding)) {
             val formattedText = formatScheduledAt(Instant.now())
             ScheduledBadge(text = formattedText)
+        }
+    }
+}
+
+@Preview
+@Composable
+fun EndedBadgePreview() {
+    FuseCSGOMatchesThemeContent {
+        Surface(modifier = Modifier.padding(FuseCSGOMatchesTheme.dimen.smallPadding)) {
+            val formattedText = formatScheduledAt(Instant.now())
+            ScheduledEnded(text = formattedText)
         }
     }
 }

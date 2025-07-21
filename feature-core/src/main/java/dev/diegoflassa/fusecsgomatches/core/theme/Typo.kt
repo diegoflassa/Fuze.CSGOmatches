@@ -68,6 +68,16 @@ class FuseCSGOMatchesTypography(
         color = Color.White
     ),
 
+    val textStyleEnded: TextStyle = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Bold,
+        fontSize = 8.sp,
+        lineHeight = TextUnit.Unspecified,
+        letterSpacing = 0.sp,
+        textAlign = TextAlign.Center,
+        color = Color.Black
+    ),
+
     val textStyleLeagueAndSeries: TextStyle = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,

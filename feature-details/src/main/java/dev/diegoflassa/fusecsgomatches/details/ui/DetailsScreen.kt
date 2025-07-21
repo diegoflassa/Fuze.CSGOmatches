@@ -24,7 +24,6 @@ import androidx.compose.material.icons.outlined.BrokenImage
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -77,6 +76,7 @@ import dev.diegoflassa.fusecsgomatches.details.data.dto.PlayerDetailDto
 import kotlinx.coroutines.flow.collectLatest
 import androidx.compose.ui.zIndex
 import dev.diegoflassa.fusecsgomatches.core.ui.ButtonDialogOkConfirm
+import dev.diegoflassa.fusecsgomatches.core.ui.SystemCircularLoadingIndicator
 
 private const val tag = "DetailsScreen"
 
@@ -200,9 +200,7 @@ fun DetailsScreenContent(
     ) {
         when {
             uiState.isLoading -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
+                SystemCircularLoadingIndicator()
             }
 
             uiState.error != null -> {
