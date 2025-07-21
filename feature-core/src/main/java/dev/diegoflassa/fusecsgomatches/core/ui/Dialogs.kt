@@ -1,12 +1,23 @@
 package dev.diegoflassa.fusecsgomatches.core.ui
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -14,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
@@ -21,6 +33,7 @@ import dev.diegoflassa.fusecsgomatches.core.R
 import dev.diegoflassa.fusecsgomatches.core.extensions.copy
 import dev.diegoflassa.fusecsgomatches.core.theme.FuseCSGOMatchesColors
 import dev.diegoflassa.fusecsgomatches.core.theme.FuseCSGOMatchesTheme
+import dev.diegoflassa.fusecsgomatches.core.theme.FuseCSGOMatchesThemeContent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -31,6 +44,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.Stack
 
+@Suppress("unused")
 object DialogManagerFactory {
 
     private val dialogManagers = mutableMapOf<String, DialogManager>()
@@ -107,10 +121,12 @@ class DialogManager internal constructor() {
     }
 }
 
+@Suppress("unused")
 open class DialogState(
     val onDismissRequest: (() -> Unit)? = null,
     val confirmButton: @Composable (() -> Unit)? = null,
     val modifier: Modifier? = null,
+    val body: @Composable (() -> Unit)? = null,
     val dismissButton: @Composable (() -> Unit)? = null,
     val icon: @Composable (() -> Unit)? = null,
     val title: @Composable (() -> Unit)? = null,
@@ -128,6 +144,7 @@ open class DialogState(
         private var onDismissRequest: (() -> Unit)? = null
         private var confirmButton: @Composable (() -> Unit)? = null
         private var modifier: Modifier? = null
+        private var body: @Composable (() -> Unit)? = null
         private var dismissButton: @Composable (() -> Unit)? = null
         private var icon: @Composable (() -> Unit)? = null
         private var title: @Composable (() -> Unit)? = null
@@ -152,6 +169,11 @@ open class DialogState(
 
         fun modifier(modifier: Modifier): Builder {
             this.modifier = modifier
+            return this
+        }
+
+        fun body(body: @Composable () -> Unit): Builder {
+            this.body = body
             return this
         }
 
@@ -224,6 +246,7 @@ open class DialogState(
             onDismissRequest = onDismissRequest,
             confirmButton = confirmButton,
             modifier = modifier,
+            body = body,
             dismissButton = dismissButton,
             icon = icon,
             title = title,
@@ -249,7 +272,7 @@ open class DialogState(
             dismissButton = dismissButton ?: {},
             icon = icon,
             title = title,
-            text = text,
+            text = body ?: text,
             shape = shape ?: AlertDialogDefaults.shape,
             containerColor = containerColor ?: FuseCSGOMatchesTheme.colorScheme.secondaryContainer,
             iconContentColor = iconContentColor
@@ -339,7 +362,10 @@ fun ButtonDialog(
 ) {
     Button(
         modifier = modifier.wrapContentSize(),
-        colors = colorsButtonDialog.copy(containerColor = buttonBackground, disabledContainerColor = buttonBackground),
+        colors = colorsButtonDialog.copy(
+            containerColor = buttonBackground,
+            disabledContainerColor = buttonBackground
+        ),
         onClick = onClick ?: {}
     ) {
         Text(
@@ -387,21 +413,6 @@ fun ButtonDialogSimConfirm(modifier: Modifier = Modifier, onClick: (() -> Unit)?
 }
 
 @Composable
-fun ButtonDialogSimText(
-    modifier: Modifier = Modifier,
-    text: String = "",
-    textColor: Color = FuseCSGOMatchesTheme.colorScheme.onSecondaryContainer,
-    onClick: (() -> Unit)? = null
-) {
-    ButtonDialog(
-        modifier = modifier,
-        text = stringResource(R.string.sim_texto, text),
-        textColor = textColor,
-        onClick = onClick
-    )
-}
-
-@Composable
 fun ButtonDialogNaoDismiss(modifier: Modifier = Modifier, onClick: (() -> Unit)? = null) {
     ButtonDialog(
         modifier = modifier,
@@ -409,4 +420,100 @@ fun ButtonDialogNaoDismiss(modifier: Modifier = Modifier, onClick: (() -> Unit)?
         textColor = FuseCSGOMatchesTheme.colorScheme.onSecondaryContainer,
         onClick = onClick
     )
+}
+
+@Composable
+fun ButtonDialogCancel(modifier: Modifier = Modifier, onClick: (() -> Unit)? = null) {
+    ButtonDialog(
+        modifier = modifier,
+        text = stringResource(R.string.cancel),
+        textColor = FuseCSGOMatchesTheme.colorScheme.onSecondaryContainer,
+        onClick = onClick
+    )
+}
+
+@Composable
+fun filterDialog(
+    onDismissRequest: () -> Unit = {},
+    onFilter: (onlyFutureEvents: Boolean) -> Unit = { _ -> },
+    dialogTitle: String = "Filters",
+    futureEventsSwitchText: String = stringResource(R.string.search_future_events),
+    onlyFutureGames: Boolean = true,
+): DialogState {
+
+    var onlyFutureGamesState by remember { mutableStateOf(onlyFutureGames) }
+
+    val dialogBody: @Composable () -> Unit = {
+        SettingsBody(
+            futureEventsValue = onlyFutureGamesState,
+            onFutureEventsChange = { newValue -> onlyFutureGamesState = newValue },
+            futureEventsText = futureEventsSwitchText
+        )
+    }
+
+    return DialogState.Builder()
+        .title(dialogTitle)
+        .body(dialogBody)
+        .onDismissRequest(onDismissRequest)
+        .dismissButton {
+            ButtonDialogCancel {
+                onDismissRequest.invoke()
+            }
+        }
+        .confirmButton {
+            ButtonDialogText(text = stringResource(R.string.apply)) {
+                onFilter.invoke(onlyFutureGamesState)
+                onDismissRequest()
+            }
+        }
+        .build()
+}
+
+@Composable
+private fun SettingsBody(
+    futureEventsValue: Boolean,
+    onFutureEventsChange: (Boolean) -> Unit,
+    futureEventsText: String
+) {
+    Column(
+        modifier = Modifier
+            .padding(
+                start = FuseCSGOMatchesTheme.dimen.mediumLargePadding,
+                end = FuseCSGOMatchesTheme.dimen.mediumLargePadding,
+                top = FuseCSGOMatchesTheme.dimen.mediumPadding,
+                bottom = FuseCSGOMatchesTheme.dimen.smallPadding
+            )
+            .fillMaxWidth()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = FuseCSGOMatchesTheme.dimen.mediumPadding)
+        ) {
+            Text(
+                text = futureEventsText,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.weight(1f)
+            )
+            Switch(
+                checked = futureEventsValue,
+                onCheckedChange = onFutureEventsChange
+            )
+        }
+
+    }
+}
+
+@Preview(showBackground = true, name = "Filter Dialog Preview")
+@Composable
+fun FilterDialogPreview() {
+    FuseCSGOMatchesThemeContent {
+        val dialogState = filterDialog(
+            onDismissRequest = {},
+            onFilter = { _ -> },
+            dialogTitle = "Filter Events Preview",
+        )
+        dialogState.ExibirDialog()
+    }
 }

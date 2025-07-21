@@ -8,35 +8,36 @@ import dev.diegoflassa.fusecsgomatches.main.data.repository.interfaces.IMatchesR
 import retrofit2.HttpException
 import java.io.IOException
 import java.time.Instant
-import java.util.Locale
-
-private const val STARTING_PAGE_INDEX = 1
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class MatchesPagingSource(
     private val matchesRepository: IMatchesRepository,
+    private val onlyFutureGames: Boolean = true,
 ) : PagingSource<Int, MatchDto>() {
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MatchDto> {
+    override suspend fun load(
+        params: LoadParams<Int>
+    ): LoadResult<Int, MatchDto> {
         val pageNumber = params.key ?: STARTING_PAGE_INDEX
         val currentLoadSize = params.loadSize
 
         return try {
+            val beginAt = if (onlyFutureGames) {
+                getCurrentDateAsString()
+            } else {
+                ""
+            }
+
             val response = matchesRepository.getMatches(
                 page = pageNumber,
-                pageSize = currentLoadSize
+                pageSize = currentLoadSize,
+                beginAt = beginAt
             )
-            val currentMoment = Instant.now()
-            val sortedMatches: List<MatchDto> = response.body()?.filter { match ->
-                val matchTime = match.beginAt ?: match.scheduledAt
-                matchTime != null && matchTime.isBefore(currentMoment).not()
-            }?.filter { match ->
-                val videogameTitleName = match.videogameTitle?.name?.lowercase(Locale.getDefault())
-                videogameTitleName != null && (
-                        videogameTitleName.contains("counter") ||
-                                videogameTitleName.contains("strike") ||
-                                videogameTitleName.contains("cs")
-                        )
-            }?.sortedWith(
+
+            val allMatchesFromApi = response.body() ?: emptyList()
+
+            val finalSortedMatches = allMatchesFromApi.sortedWith(
                 compareBy<MatchDto> { match ->
                     when (match.status) {
                         MatchStatus.IN_PROGRESS -> 0
@@ -49,20 +50,25 @@ class MatchesPagingSource(
                 }.thenBy { match ->
                     match.beginAt ?: match.scheduledAt ?: Instant.MAX
                 }
-            ) ?: emptyList()
+            )
+
             if (response.isSuccessful) {
-                val nextKey = if (sortedMatches.isEmpty() || sortedMatches.size < currentLoadSize) {
+                val isLastPageFromAPI = allMatchesFromApi.size < currentLoadSize
+
+                val nextKey = if (isLastPageFromAPI) {
                     null
                 } else {
                     pageNumber + 1
                 }
+
                 val prevKey = if (pageNumber == STARTING_PAGE_INDEX) {
                     null
                 } else {
                     pageNumber - 1
                 }
+
                 LoadResult.Page(
-                    data = sortedMatches,
+                    data = finalSortedMatches,
                     prevKey = prevKey,
                     nextKey = nextKey
                 )
@@ -73,7 +79,15 @@ class MatchesPagingSource(
             LoadResult.Error(e)
         } catch (e: HttpException) {
             LoadResult.Error(e)
+        } catch (e: Exception) {
+            LoadResult.Error(e)
         }
+    }
+
+    private fun getCurrentDateAsString(): String {
+        val currentDate: LocalDate = LocalDate.now()
+        val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        return currentDate.format(formatter)
     }
 
     override fun getRefreshKey(state: PagingState<Int, MatchDto>): Int? {
@@ -81,5 +95,9 @@ class MatchesPagingSource(
             state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
                 ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
         }
+    }
+
+    companion object {
+        const val STARTING_PAGE_INDEX = 1
     }
 }

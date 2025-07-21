@@ -3,16 +3,10 @@
     <string name="app_name" translatable="false">CS:GO</string>
     <string name="ok">OK</string>
     <string name="sim">Yes</string>
-    <string name="sim_texto">Yes, %s</string>
-    <string name="continuar">continue</string>
-    <string name="excluir">delete</string>
     <string name="nao">No</string>
-    <string name="confirmar">Confirm</string>
-    <string name="cancelar">Cancel</string>
-    <string name="permitir">Allow</string>
-    <string name="agora_nao">Not now</string>
-    <string name="entendido">Got it</string>
-    <string name="voltar">Back</string>
     <string name="not_available_short">N/A</string>
     <string name="scheduled_today">Today, %1$s</string>
+    <string name="apply">Apply</string>
+    <string name="cancel">Cancel</string>
+    <string name="search_future_events">Search only future events</string>
 </resources>

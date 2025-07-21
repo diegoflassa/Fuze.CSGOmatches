@@ -10,6 +10,8 @@ interface PandaMatchesApiService {
     suspend fun getMatches(
         @Query("page[number]") page: Int,
         @Query("page[size]") pageSize: Int,
+        @Query("search[name]") searchName: String = "strike",
+        @Query("filter[begin_at]") beginAt: String = "",
         @Query("sort") sort: String = "-begin_at"
     ): Response<List<MatchDto>>
 }

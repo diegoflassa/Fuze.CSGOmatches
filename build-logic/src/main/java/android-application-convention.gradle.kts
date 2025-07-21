@@ -4,7 +4,7 @@ import java.io.FileInputStream
 import java.util.Properties
 import java.io.File
 
-val requestedTaskNames = gradle.startParameter.taskNames
+val requestedTaskNames: MutableList<String> = gradle.startParameter.taskNames
 
 val isAssembleTask = requestedTaskNames.any { taskName ->
     taskName.contains("assembleDebug", ignoreCase = true) ||

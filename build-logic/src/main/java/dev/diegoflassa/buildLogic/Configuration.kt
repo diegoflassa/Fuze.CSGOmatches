@@ -6,7 +6,7 @@ import java.io.FileOutputStream
 import java.util.*
 
 object Configuration {
-    const val APP_PREFIX = "cmqt"
+    const val APP_PREFIX = "fcsgo"
     const val DIEGOFLASSA_ID = "dev.diegoflassa"
     const val APPLICATION_ID = "$DIEGOFLASSA_ID.fusecsgomatches"
     const val MINIMUM_SDK = 28

@@ -9,16 +9,16 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
 
 val LocalFuseCSGOMatchesShapes = staticCompositionLocalOf { FuseCSGOMatchesShapes() }
+val fuseCSGOMatchesDimen = FuseCSGOMatchesDimen()
 
 data class FuseCSGOMatchesShapes(
     val agora: Shape = AgoraTagShape(),
 )
 
 class AgoraTagShape(
-    private val bottomLeftCornerRadiusDp: Dp = 16.dp
+    private val bottomLeftCornerRadiusDp: Dp = fuseCSGOMatchesDimen.smallPadding
 ) : Shape {
     override fun createOutline(
         size: Size,
