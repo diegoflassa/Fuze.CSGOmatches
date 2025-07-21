@@ -21,14 +21,14 @@
 #-renamesourcefileattribute SourceFile
 
 # Remove all Log statements in release builds
-#-assumenosideeffects class android.util.Log {
-#    public static int d(...);
-#    public static int i(...);
-#    public static int w(...);
-#    public static int e(...);
-#    public static int v(...);
-#    public static int println(...);
-#}
+-assumenosideeffects class android.util.Log {
+    public static int d(...);
+    public static int i(...);
+    public static int w(...);
+    public static int e(...);
+    public static int v(...);
+    public static int println(...);
+}
 
 -keepattributes Signature,InnerClasses
 -keep class dev.diegoflassa.fusecsgomatches.details.data.dto.** { *; }
