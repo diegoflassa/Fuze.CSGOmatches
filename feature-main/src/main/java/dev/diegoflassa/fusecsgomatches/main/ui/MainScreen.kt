@@ -546,10 +546,10 @@ fun MatchCard(match: MatchDto, onIntent: ((MainIntent) -> Unit)? = null) {
                     end.linkTo(parent.end)
                 }, text = scheduledDate)
             } else if (match.status == MatchStatus.ENDED) {
-                ScheduledEnded(modifier = Modifier.constrainAs(topRef) {
+                EndedBadge(modifier = Modifier.constrainAs(topRef) {
                     top.linkTo(parent.top)
                     end.linkTo(parent.end)
-                }, text = scheduledDate)
+                })
             } else {
                 Spacer(
                     modifier = Modifier
@@ -846,7 +846,7 @@ fun ScheduledBadge(text: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ScheduledEnded(text: String, modifier: Modifier = Modifier) {
+fun EndedBadge(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .sizeIn(minWidth = FuseCSGOMatchesTheme.dimen.mainBadgeMinWidth)
@@ -863,7 +863,7 @@ fun ScheduledEnded(text: String, modifier: Modifier = Modifier) {
             modifier = Modifier
                 .wrapContentSize()
                 .padding(top = FuseCSGOMatchesTheme.dimen.mainBadgeTextTopPadding),
-            text = text,
+            text = stringResource(R.string.ended),
             style = FuseCSGOMatchesTheme.typography.textStyleEnded,
         )
     }
@@ -895,8 +895,7 @@ fun ScheduledBadgePreview() {
 fun EndedBadgePreview() {
     FuseCSGOMatchesThemeContent {
         Surface(modifier = Modifier.padding(FuseCSGOMatchesTheme.dimen.smallPadding)) {
-            val formattedText = formatScheduledAt(Instant.now())
-            ScheduledEnded(text = formattedText)
+            EndedBadge()
         }
     }
 }
