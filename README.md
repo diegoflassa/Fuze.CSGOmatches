@@ -22,6 +22,8 @@ This project showcases a range of modern Android development practices and featu
 
 *   Add a filter to enable to show all, or upcoming Matches (Implemented)
 *   Add one badge for each status of the Match
+    ( The supported status with badges are: ENDED, IN_PROGRESS and SCHEDULED, but there are also
+    the status FINISHED, CANCELED and NOT_STARTED )
 *   It could be allowed to use the compose's CircularProgressIndicator instead of the system.
     ( I used the system, through and AndroidView, in the method (`SystemCircularLoadingIndicator`) )
 
