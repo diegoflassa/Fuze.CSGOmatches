@@ -25,7 +25,7 @@ This project showcases a range of modern Android development practices and featu
     ( Supported statuses that include badges are: `ENDED`, `IN_PROGRESS`, and `SCHEDULED`,
     but there are also `FINISHED`, `CANCELED` and `NOT_STARTED` )
 *   It could be allowed to use the compose's CircularProgressIndicator instead of the system.
-    ( I used the system, through and AndroidView, in the method `SystemCircularLoadingIndicator` )
+    ( I used the system, through an AndroidView, in the method `SystemCircularLoadingIndicator` )
 
 ## Tech Stack & Architectural Decisions
 
