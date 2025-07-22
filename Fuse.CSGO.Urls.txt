@@ -1,8 +1,0 @@
-Project Specification:
-https://fuzecc.notion.site/Android-Dev-EN-ff4251427afa4db59a7729de8f02416b
-
-PandaScore
-https://www.pandascore.co/
-
-Figma
-https://www.figma.com/file/OeNVxV2YkHXMgzky8YNQQO/Desafio-CSTV?node-id=0%3A1
