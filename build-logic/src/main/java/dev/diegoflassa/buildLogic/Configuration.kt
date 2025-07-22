@@ -8,7 +8,7 @@ import java.util.*
 object Configuration {
     const val APP_PREFIX = "fcsgo"
     const val DIEGOFLASSA_ID = "dev.diegoflassa"
-    const val APPLICATION_ID = "$DIEGOFLASSA_ID.fusecsgomatches"
+    const val APPLICATION_ID = "$DIEGOFLASSA_ID.fuzecsgomatches"
     const val MINIMUM_SDK = 28
     const val COMPILE_SDK = 36
     const val TARGET_SDK = 36
@@ -60,7 +60,7 @@ object Configuration {
             if (!initialized) {
                 println("Configuration:: WARNING: VERSION_CODE accessed before initializeBuildCount was called! Returning a default.")
             }
-            return (103 * 1000) + buildCountValue
+            return (104 * 1000) + buildCountValue
         }
 
     val VERSION_NAME: String
@@ -68,7 +68,7 @@ object Configuration {
             if (!initialized) {
                 println("Configuration:: WARNING: VERSION_NAME accessed before initializeBuildCount was called! Returning a default.")
             }
-            return "1.0.3-build_$buildCountValue"
+            return "1.0.4-build_$buildCountValue"
         }
 
     fun buildAppName(name: String, versionName: String): String {

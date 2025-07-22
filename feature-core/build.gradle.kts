@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-    namespace = "dev.diegoflassa.fusecsgomatches.core"
+    namespace = "dev.diegoflassa.fuzecsgomatches.core"
 }
 
 kotlin {

@@ -1,6 +1,6 @@
-# Fuse CSGO Matches
+# Fuze CSGO Matches
 
-*  Fuse CSGO Matches is an Android application that displays a list of Counter-Strike: Global
+*  Fuze CSGO Matches is an Android application that displays a list of Counter-Strike: Global
    Offensive (CS:GO) matches.
 
 ## Implemented Features (Brief)

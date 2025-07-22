@@ -10,7 +10,7 @@ plugins {
 
 
 android {
-    namespace = "dev.diegoflassa.fusecsgomatches.main"
+    namespace = "dev.diegoflassa.fuzecsgomatches.main"
 }
 
 dependencies {
