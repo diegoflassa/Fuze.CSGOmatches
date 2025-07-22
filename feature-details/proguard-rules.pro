@@ -31,4 +31,4 @@
 }
 
 -keepattributes Signature,InnerClasses
--keep class dev.diegoflassa.fusecsgomatches.details.data.dto.** { *; }
+-keep class dev.diegoflassa.fuzecsgomatches.details.data.dto.** { *; }

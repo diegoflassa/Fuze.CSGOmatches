@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-    namespace = "dev.diegoflassa.fusecsgomatches.details"
+    namespace = "dev.diegoflassa.fuzecsgomatches.details"
 }
 
 dependencies {
