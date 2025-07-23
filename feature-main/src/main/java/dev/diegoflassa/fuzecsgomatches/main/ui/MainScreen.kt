@@ -65,6 +65,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
@@ -535,21 +536,32 @@ fun MatchCard(match: MatchDto, onIntent: ((MainIntent) -> Unit)? = null) {
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
             val (topRef, mainContentRef, bottomRowRef) = createRefs()
 
+            val badgeModifier = Modifier.constrainAs(topRef) {
+                top.linkTo(parent.top)
+                end.linkTo(parent.end)
+            }
+
             if (match.live?.supported == true && match.status == MatchStatus.IN_PROGRESS) {
-                NowBadge(modifier = Modifier.constrainAs(topRef) {
-                    top.linkTo(parent.top)
-                    end.linkTo(parent.end)
-                })
+                StatusBadge(
+                    text = stringResource(R.string.now),
+                    backgroundColor = FuzeCSGOMatchesTheme.colorScheme.errorContainer,
+                    textStyle = FuzeCSGOMatchesTheme.typography.textStyleNow,
+                    modifier = badgeModifier
+                )
             } else if (match.status == MatchStatus.SCHEDULED) {
-                ScheduledBadge(modifier = Modifier.constrainAs(topRef) {
-                    top.linkTo(parent.top)
-                    end.linkTo(parent.end)
-                }, text = scheduledDate)
+                StatusBadge(
+                    text = scheduledDate,
+                    backgroundColor = FuzeCSGOMatchesColors.containerColorScheduledBadge,
+                    textStyle = FuzeCSGOMatchesTheme.typography.textStyleNow,
+                    modifier = badgeModifier
+                )
             } else if (match.status == MatchStatus.ENDED) {
-                EndedBadge(modifier = Modifier.constrainAs(topRef) {
-                    top.linkTo(parent.top)
-                    end.linkTo(parent.end)
-                })
+                StatusBadge(
+                    text = stringResource(R.string.ended),
+                    backgroundColor = FuzeCSGOMatchesTheme.colorScheme.onErrorContainer,
+                    textStyle = FuzeCSGOMatchesTheme.typography.textStyleEnded,
+                    modifier = badgeModifier
+                )
             } else {
                 Spacer(
                     modifier = Modifier
@@ -558,7 +570,8 @@ fun MatchCard(match: MatchDto, onIntent: ((MainIntent) -> Unit)? = null) {
                         .constrainAs(topRef) {
                             top.linkTo(parent.top)
                             end.linkTo(parent.end)
-                        })
+                        }
+                )
             }
 
             val noPadding = FuzeCSGOMatchesTheme.dimen.noPadding
@@ -798,14 +811,19 @@ fun LeagueImage(imageUrl: Uri?, name: String) {
 }
 
 @Composable
-fun NowBadge(modifier: Modifier = Modifier) {
+fun StatusBadge(
+    text: String,
+    backgroundColor: Color,
+    textStyle: TextStyle,
+    modifier: Modifier = Modifier
+) {
     Box(
         modifier = modifier
             .sizeIn(minWidth = FuzeCSGOMatchesTheme.dimen.mainBadgeMinWidth)
             .height(FuzeCSGOMatchesTheme.dimen.mainBadgeHeight)
             .wrapContentWidth()
             .clip(FuzeCSGOMatchesTheme.shapes.agora)
-            .background(FuzeCSGOMatchesTheme.colorScheme.errorContainer)
+            .background(backgroundColor)
             .padding(
                 horizontal = FuzeCSGOMatchesTheme.dimen.smallMediumPadding,
                 vertical = FuzeCSGOMatchesTheme.dimen.mainBadgeVerticalPadding
@@ -815,56 +833,8 @@ fun NowBadge(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .wrapContentSize()
                 .padding(top = FuzeCSGOMatchesTheme.dimen.mainBadgeTextTopPadding),
-            text = stringResource(R.string.now),
-            style = FuzeCSGOMatchesTheme.typography.textStyleNow,
-        )
-    }
-}
-
-@Composable
-fun ScheduledBadge(text: String, modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .sizeIn(minWidth = FuzeCSGOMatchesTheme.dimen.mainBadgeMinWidth)
-            .height(FuzeCSGOMatchesTheme.dimen.mainBadgeHeight)
-            .wrapContentWidth()
-            .clip(FuzeCSGOMatchesTheme.shapes.agora)
-            .background(FuzeCSGOMatchesColors.containerColorScheduledBadge)
-            .padding(
-                horizontal = FuzeCSGOMatchesTheme.dimen.smallMediumPadding,
-                FuzeCSGOMatchesTheme.dimen.mainBadgeVerticalPadding
-            )
-    ) {
-        Text(
-            modifier = Modifier
-                .wrapContentSize()
-                .padding(top = FuzeCSGOMatchesTheme.dimen.mainBadgeTextTopPadding),
             text = text,
-            style = FuzeCSGOMatchesTheme.typography.textStyleNow,
-        )
-    }
-}
-
-@Composable
-fun EndedBadge(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .sizeIn(minWidth = FuzeCSGOMatchesTheme.dimen.mainBadgeMinWidth)
-            .height(FuzeCSGOMatchesTheme.dimen.mainBadgeHeight)
-            .wrapContentWidth()
-            .clip(FuzeCSGOMatchesTheme.shapes.agora)
-            .background(FuzeCSGOMatchesTheme.colorScheme.onErrorContainer)
-            .padding(
-                horizontal = FuzeCSGOMatchesTheme.dimen.smallMediumPadding,
-                FuzeCSGOMatchesTheme.dimen.mainBadgeVerticalPadding
-            )
-    ) {
-        Text(
-            modifier = Modifier
-                .wrapContentSize()
-                .padding(top = FuzeCSGOMatchesTheme.dimen.mainBadgeTextTopPadding),
-            text = stringResource(R.string.ended),
-            style = FuzeCSGOMatchesTheme.typography.textStyleEnded,
+            style = textStyle,
         )
     }
 }
@@ -874,7 +844,11 @@ fun EndedBadge(modifier: Modifier = Modifier) {
 fun NowBadgePreview() {
     FuzeCSGOMatchesThemeContent {
         Surface(modifier = Modifier.padding(FuzeCSGOMatchesTheme.dimen.smallPadding)) {
-            NowBadge()
+            StatusBadge(
+                text = stringResource(R.string.now),
+                backgroundColor = FuzeCSGOMatchesTheme.colorScheme.errorContainer,
+                textStyle = FuzeCSGOMatchesTheme.typography.textStyleNow
+            )
         }
     }
 }
@@ -884,8 +858,12 @@ fun NowBadgePreview() {
 fun ScheduledBadgePreview() {
     FuzeCSGOMatchesThemeContent {
         Surface(modifier = Modifier.padding(FuzeCSGOMatchesTheme.dimen.smallPadding)) {
-            val formattedText = formatScheduledAt(Instant.now())
-            ScheduledBadge(text = formattedText)
+          val formattedText = formatScheduledAt(Instant.now())
+            StatusBadge(
+                text = formattedText,
+                backgroundColor = FuzeCSGOMatchesColors.containerColorScheduledBadge,
+                textStyle = FuzeCSGOMatchesTheme.typography.textStyleNow
+            )
         }
     }
 }
@@ -895,7 +873,11 @@ fun ScheduledBadgePreview() {
 fun EndedBadgePreview() {
     FuzeCSGOMatchesThemeContent {
         Surface(modifier = Modifier.padding(FuzeCSGOMatchesTheme.dimen.smallPadding)) {
-            EndedBadge()
+            StatusBadge(
+                text = stringResource(R.string.ended),
+                backgroundColor = FuzeCSGOMatchesTheme.colorScheme.onErrorContainer,
+                textStyle = FuzeCSGOMatchesTheme.typography.textStyleEnded
+            )
         }
     }
 }
