@@ -96,14 +96,14 @@ This project showcases a range of modern Android development practices and featu
 1.  **Clone the repository:**
 
     ```powershell, cmd
-        git clone https://github.com/diegoflassa/Fuse.CSGOmatches.git
-        cd Fuse.CSGOMatches
+        git clone https://github.com/diegoflassa/Fuze.CSGOmatches.git
+        cd Fuze.CSGOMatches
     ```
 
 2.  **Open in Android Studio:**
     *   Open Android Studio (latest stable version recommended).
     *   Click on "Open" or "Open an Existing Project".
-    *   Navigate to the cloned `Fuse.CSGOMatches` directory and select it.
+    *   Navigate to the cloned `Fuze.CSGOMatches` directory and select it.
 3.  **Verify the if Java 21 is installed:** 
     *   If is not in the windows PATH, Android Studio will ask you to choose a proper JVM
     *   If is in the windows PATH, Android Studio open the project normally
