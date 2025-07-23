@@ -21,7 +21,7 @@ class FuzeCSGOMatchesTypography(
 
     val textStyleNoMatchesFound: TextStyle = TextStyle(
         fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal ,
+        fontWeight = FontWeight.Normal,
         fontSize = 18.sp,
         lineHeight = TextUnit.Unspecified,
         letterSpacing = 0.sp,
@@ -45,7 +45,7 @@ class FuzeCSGOMatchesTypography(
         lineHeight = TextUnit.Unspecified,
         letterSpacing = 0.sp,
         textAlign = TextAlign.Center,
-        color = Color(0x80FFFFFF)
+        color = FuzeCSGOMatchesColors.vsTextColor
     ),
 
     val textStyleMainMatchDate: TextStyle = TextStyle(
@@ -75,7 +75,17 @@ class FuzeCSGOMatchesTypography(
         lineHeight = TextUnit.Unspecified,
         letterSpacing = 0.sp,
         textAlign = TextAlign.Center,
-        color = Color.Black
+        color = Color.White
+    ),
+
+    val textStyleCancelled: TextStyle = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Bold,
+        fontSize = 8.sp,
+        lineHeight = TextUnit.Unspecified,
+        letterSpacing = 0.sp,
+        textAlign = TextAlign.Center,
+        color = Color.White
     ),
 
     val textStyleLeagueAndSeries: TextStyle = TextStyle(
@@ -89,7 +99,7 @@ class FuzeCSGOMatchesTypography(
     ),
     val textStyleMainScreenTitle: TextStyle = TextStyle(
         fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium ,
+        fontWeight = FontWeight.Medium,
         fontSize = 32.sp,
         lineHeight = 40.sp,
         letterSpacing = 0.sp,
@@ -98,7 +108,7 @@ class FuzeCSGOMatchesTypography(
     ),
     val textStyleMainScreenTeamName: TextStyle = TextStyle(
         fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal ,
+        fontWeight = FontWeight.Normal,
         fontSize = 10.sp,
         lineHeight = TextUnit.Unspecified,
         letterSpacing = 0.sp,
