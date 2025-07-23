@@ -569,7 +569,7 @@ fun MatchCard(match: MatchDto, onIntent: ((MainIntent) -> Unit)? = null) {
                 MatchStatus.ENDED -> {
                     StatusBadge(
                         text = stringResource(R.string.ended),
-                        backgroundColor = FuzeCSGOMatchesTheme.colorScheme.onErrorContainer,
+                        backgroundColor = FuzeCSGOMatchesColors.containerColorEndedBadge,
                         textStyle = FuzeCSGOMatchesTheme.typography.textStyleEnded,
                         modifier = badgeModifier
                     )
