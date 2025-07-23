@@ -16,4 +16,5 @@
     <string name="apply_filter_description">Apply filter</string>
     <string name="or_try_disable_the_filter">Or, try to disable the \"Search only future events\" in the filter.</string>
     <string name="ended">Ended</string>
+    <string name="canceled">Cancelled</string>
 </resources>
