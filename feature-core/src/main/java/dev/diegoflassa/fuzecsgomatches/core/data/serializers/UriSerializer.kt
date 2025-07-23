@@ -1,7 +1,6 @@
 package dev.diegoflassa.fuzecsgomatches.core.data.serializers
 
 import android.net.Uri
-import android.util.Log
 import androidx.core.net.toUri
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
