@@ -25,7 +25,6 @@ import org.junit.Test
 import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
-import java.time.Instant
 
 @ExperimentalCoroutinesApi
 class GetOpponentsUseCaseTest {
@@ -47,21 +46,19 @@ class GetOpponentsUseCaseTest {
 
     @After
     fun tearDown() {
-        unmockkStatic(Uri::class) // Important to clean up static mocks
+        unmockkStatic(Uri::class)
     }
 
     @Suppress("SameParameterValue")
-    private fun createDummyOpponentDto(id: Int, name: String, imageUrlString: String): OpponentTeamDetailDto {
+    private fun createDummyOpponentDto(
+        name: String,
+        imageUrlString: String
+    ): OpponentTeamDetailDto {
         every { Uri.parse(imageUrlString) } returns mockUri
         return OpponentTeamDetailDto(
-            id = id,
             name = name,
             imageUrl = imageUrlString.toUri(),
             players = emptyList(),
-            acronym = name.take(3).uppercase(),
-            location = "US",
-            slug = name.replace(" ", "-").lowercase(),
-            modifiedAt = Instant.now()
         )
     }
 
@@ -69,9 +66,10 @@ class GetOpponentsUseCaseTest {
     fun `invoke with valid idOrSlug returns Success result with data`() = runTest(testDispatcher) {
         // Given
         val idOrSlug = "valid-team"
-        val opponentDto = createDummyOpponentDto(1, "Team Valid", "http://example.com/image.png")
+        val opponentDto = createDummyOpponentDto("Team Valid", "http://example.com/image.png")
         val expectedResponseDto = OpponentsResponseDto(opponents = listOf(opponentDto))
-        val successfulResponse: Response<OpponentsResponseDto> = Response.success(expectedResponseDto)
+        val successfulResponse: Response<OpponentsResponseDto> =
+            Response.success(expectedResponseDto)
 
         coEvery { opponentsRepository.getOpponents(idOrSlug) } returns successfulResponse
 
@@ -157,7 +155,8 @@ class GetOpponentsUseCaseTest {
         // Given
         val idOrSlug = "http-exception-team"
         val httpExceptionMessage = "HTTP 403 Forbidden"
-        val responseErrorBody = "Actual error content".toResponseBody("application/json".toMediaTypeOrNull())
+        val responseErrorBody =
+            "Actual error content".toResponseBody("application/json".toMediaTypeOrNull())
         val mockResponse = Response.error<OpponentsResponseDto>(403, responseErrorBody)
 
         val httpException = mockk<HttpException>()
@@ -180,30 +179,34 @@ class GetOpponentsUseCaseTest {
     }
 
     @Test
-    fun `invoke returns default Error on HttpException with null or blank localized message`() = runTest(testDispatcher) {
-        // Given
-        val idOrSlug = "http-exception-null-message-team"
-        val responseErrorBody = "".toResponseBody("application/json".toMediaTypeOrNull())
-        val mockResponse = Response.error<OpponentsResponseDto>(500, responseErrorBody)
+    fun `invoke returns default Error on HttpException with null or blank localized message`() =
+        runTest(testDispatcher) {
+            // Given
+            val idOrSlug = "http-exception-null-message-team"
+            val responseErrorBody = "".toResponseBody("application/json".toMediaTypeOrNull())
+            val mockResponse = Response.error<OpponentsResponseDto>(500, responseErrorBody)
 
-        val httpExceptionWithNullMessage = mockk<HttpException>()
-        every { httpExceptionWithNullMessage.localizedMessage } returns null
-        every { httpExceptionWithNullMessage.code() } returns 500
-        every { httpExceptionWithNullMessage.message() } returns "Server Error"
-        every { httpExceptionWithNullMessage.response() } returns mockResponse
+            val httpExceptionWithNullMessage = mockk<HttpException>()
+            every { httpExceptionWithNullMessage.localizedMessage } returns null
+            every { httpExceptionWithNullMessage.code() } returns 500
+            every { httpExceptionWithNullMessage.message() } returns "Server Error"
+            every { httpExceptionWithNullMessage.response() } returns mockResponse
 
 
-        coEvery { opponentsRepository.getOpponents(idOrSlug) } throws httpExceptionWithNullMessage
+            coEvery { opponentsRepository.getOpponents(idOrSlug) } throws httpExceptionWithNullMessage
 
-        // When & Then
-        getOpponentsUseCase(idOrSlug).test {
-            val result = awaitItem()
-            assertTrue(result is DomainResult.Error)
-            assertEquals("An unexpected error occurred during HTTP request.", (result as DomainResult.Error).message)
-            assertEquals(httpExceptionWithNullMessage, result.ex)
-            awaitComplete()
+            // When & Then
+            getOpponentsUseCase(idOrSlug).test {
+                val result = awaitItem()
+                assertTrue(result is DomainResult.Error)
+                assertEquals(
+                    "An unexpected error occurred during HTTP request.",
+                    (result as DomainResult.Error).message
+                )
+                assertEquals(httpExceptionWithNullMessage, result.ex)
+                awaitComplete()
+            }
         }
-    }
 
     @Test
     fun `invoke returns Error on IOException with message`() = runTest(testDispatcher) {
@@ -224,21 +227,25 @@ class GetOpponentsUseCaseTest {
     }
 
     @Test
-    fun `invoke returns default Error on IOException with null or blank message`() = runTest(testDispatcher) {
-        // Given
-        val idOrSlug = "io-exception-null-message-team"
-        val ioExceptionWithNullMessage = IOException(null as String?)
-        coEvery { opponentsRepository.getOpponents(idOrSlug) } throws ioExceptionWithNullMessage
+    fun `invoke returns default Error on IOException with null or blank message`() =
+        runTest(testDispatcher) {
+            // Given
+            val idOrSlug = "io-exception-null-message-team"
+            val ioExceptionWithNullMessage = IOException(null as String?)
+            coEvery { opponentsRepository.getOpponents(idOrSlug) } throws ioExceptionWithNullMessage
 
-        // When & Then
-        getOpponentsUseCase(idOrSlug).test {
-            val result = awaitItem()
-            assertTrue(result is DomainResult.Error)
-            assertEquals("Couldn't reach server. Check your internet connection.", (result as DomainResult.Error).message)
-            assertEquals(ioExceptionWithNullMessage, result.ex)
-            awaitComplete()
+            // When & Then
+            getOpponentsUseCase(idOrSlug).test {
+                val result = awaitItem()
+                assertTrue(result is DomainResult.Error)
+                assertEquals(
+                    "Couldn't reach server. Check your internet connection.",
+                    (result as DomainResult.Error).message
+                )
+                assertEquals(ioExceptionWithNullMessage, result.ex)
+                awaitComplete()
+            }
         }
-    }
 
     @Test
     fun `invoke returns Error on generic Exception with message`() = runTest(testDispatcher) {
@@ -259,19 +266,23 @@ class GetOpponentsUseCaseTest {
     }
 
     @Test
-    fun `invoke returns default Error on generic Exception with null or blank message`() = runTest(testDispatcher) {
-        // Given
-        val idOrSlug = "generic-exception-null-message-team"
-        val genericExceptionWithNullMessage = Exception(null as String?)
-        coEvery { opponentsRepository.getOpponents(idOrSlug) } throws genericExceptionWithNullMessage
+    fun `invoke returns default Error on generic Exception with null or blank message`() =
+        runTest(testDispatcher) {
+            // Given
+            val idOrSlug = "generic-exception-null-message-team"
+            val genericExceptionWithNullMessage = Exception(null as String?)
+            coEvery { opponentsRepository.getOpponents(idOrSlug) } throws genericExceptionWithNullMessage
 
-        // When & Then
-        getOpponentsUseCase(idOrSlug).test {
-            val result = awaitItem()
-            assertTrue(result is DomainResult.Error)
-            assertEquals("An unexpected error occurred.", (result as DomainResult.Error).message)
-            assertEquals(genericExceptionWithNullMessage, result.ex)
-            awaitComplete()
+            // When & Then
+            getOpponentsUseCase(idOrSlug).test {
+                val result = awaitItem()
+                assertTrue(result is DomainResult.Error)
+                assertEquals(
+                    "An unexpected error occurred.",
+                    (result as DomainResult.Error).message
+                )
+                assertEquals(genericExceptionWithNullMessage, result.ex)
+                awaitComplete()
+            }
         }
-    }
 }

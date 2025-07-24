@@ -20,7 +20,6 @@ ax-paging-testing = "3.3.6"
 
 #Instrumented Tests
 ax-test-ext-junit-ktx = "1.2.1"
-ax-test-expresso-core = "3.6.1"
 
 #Compose
 compose-bom = "2025.07.00"
@@ -98,7 +97,6 @@ ax-paging-testing = { module = "androidx.paging:paging-testing", version.ref = "
 
 #Instrumented Tests
 ax-test-ext-junit-ktx = { module = "androidx.test.ext:junit-ktx", version.ref = "ax-test-ext-junit-ktx" }
-ax-test-expresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "ax-test-expresso-core" }
 
 #Compose
 ax-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
