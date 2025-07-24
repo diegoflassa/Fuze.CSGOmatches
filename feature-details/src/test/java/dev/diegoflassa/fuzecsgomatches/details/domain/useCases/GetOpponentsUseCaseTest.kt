@@ -46,7 +46,7 @@ class GetOpponentsUseCaseTest {
 
     @After
     fun tearDown() {
-        unmockkStatic(Uri::class) // Important to clean up static mocks
+        unmockkStatic(Uri::class)
     }
 
     @Suppress("SameParameterValue")
