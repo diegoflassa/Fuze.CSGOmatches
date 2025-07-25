@@ -123,7 +123,7 @@ fun MainScreen(
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val matchesLazyItems: LazyPagingItems<MatchDto> = uiState.matchesFlow.collectAsLazyPagingItems()
+    val matchesLazyItems: LazyPagingItems<MatchDto> = viewModel.matchesFlow.collectAsLazyPagingItems()
 
     var dialogManager by remember { mutableStateOf<DialogManager?>(null) }
     LaunchedEffect(Unit) {

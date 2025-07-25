@@ -10,9 +10,9 @@ import dev.diegoflassa.fuzecsgomatches.main.data.dto.MatchDto
 import dev.diegoflassa.fuzecsgomatches.main.domain.useCases.GetMatchesUseCase
 import dev.diegoflassa.fuzecsgomatches.main.ui.MainEffect.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -36,6 +36,9 @@ class MainViewModel @Inject constructor(
 
     private val _effect = Channel<MainEffect>()
     val effect = _effect.receiveAsFlow()
+
+    private val _matchesFlow: MutableStateFlow<PagingData<MatchDto>> = MutableStateFlow(PagingData.empty())
+    val matchesFlow = _matchesFlow.asStateFlow()
 
     fun reduce(intent: MainIntent) {
         viewModelScope.launch {
@@ -75,26 +78,36 @@ class MainViewModel @Inject constructor(
     }
 
     private fun fetchMatches() {
-        _uiState.update { it.copy(isLoading = true, error = null) }
-        try {
-            val newMatchesFlow: Flow<PagingData<MatchDto>> =
+        _matchesFlow.value = PagingData.empty()
+        _uiState.update {
+            it.copy(
+                isLoading = true,
+                error = null,
+            )
+        }
+
+        viewModelScope.launch {
+            try {
                 getMatchesUseCase(
                     pagingConfig = pagingConfig,
                     onlyFutureGames = uiState.value.onlyFutureGames,
-                ).cachedIn(viewModelScope)
-
-            _uiState.update {
-                it.copy(
-                    matchesFlow = newMatchesFlow,
-                    isLoading = false
                 )
-            }
-        } catch (e: Exception) {
-            _uiState.update {
-                it.copy(
-                    error = e.localizedMessage ?: "Failed to load matches",
-                    isLoading = false
-                )
+                .cachedIn(viewModelScope)
+                .collectLatest { newPagingData ->
+                    _matchesFlow.value = newPagingData
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            isLoading = false
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        error = e.localizedMessage ?: "Failed to load matches",
+                        isLoading = false
+                    )
+                }
             }
         }
     }
