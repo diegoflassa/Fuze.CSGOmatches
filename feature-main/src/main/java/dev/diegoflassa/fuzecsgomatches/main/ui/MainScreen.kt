@@ -49,7 +49,6 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -77,6 +76,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -122,7 +122,7 @@ fun MainScreen(
     navigationViewModel: NavigationViewModel = hiltActivityViewModel(),
     viewModel: MainViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val matchesLazyItems: LazyPagingItems<MatchDto> = viewModel.matchesFlow.collectAsLazyPagingItems()
 
     var dialogManager by remember { mutableStateOf<DialogManager?>(null) }
@@ -130,7 +130,7 @@ fun MainScreen(
         viewModel.reduce(MainIntent.LoadMatches)
         dialogManager = DialogManagerFactory.getDialogManager(tag)
     }
-    val dialogsParaExibir = dialogManager?.dialogsParaExibir?.collectAsState()
+    val dialogsParaExibir = dialogManager?.dialogsParaExibir?.collectAsStateWithLifecycle()
 
     if (dialogsParaExibir?.value?.isNotEmpty() == true) {
         dialogManager?.dialogAtual()?.ExibirDialog()

@@ -33,7 +33,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -75,6 +74,7 @@ import dev.diegoflassa.fuzecsgomatches.details.data.dto.OpponentTeamDetailDto
 import dev.diegoflassa.fuzecsgomatches.details.data.dto.PlayerDetailDto
 import kotlinx.coroutines.flow.collectLatest
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.diegoflassa.fuzecsgomatches.core.ui.ButtonDialogOkConfirm
 import dev.diegoflassa.fuzecsgomatches.core.ui.SystemCircularLoadingIndicator
 
@@ -90,7 +90,7 @@ fun DetailsScreen(
     scheduledAt: String?,
     viewModel: DetailsViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(key1 = matchIdOrSlug) {
         if (!matchIdOrSlug.isNullOrEmpty()) {
             viewModel.reduce(DetailsIntent.LoadDetails(matchIdOrSlug))
@@ -101,7 +101,7 @@ fun DetailsScreen(
     LaunchedEffect(Unit) {
         dialogManager = DialogManagerFactory.getDialogManager(tag)
     }
-    val dialogsParaExibir = dialogManager?.dialogsParaExibir?.collectAsState()
+    val dialogsParaExibir = dialogManager?.dialogsParaExibir?.collectAsStateWithLifecycle()
 
     if (dialogsParaExibir?.value?.isNotEmpty() == true) {
         dialogManager?.dialogAtual()?.ExibirDialog()
