@@ -60,7 +60,7 @@ object Configuration {
             if (!initialized) {
                 println("Configuration:: WARNING: VERSION_CODE accessed before initializeBuildCount was called! Returning a default.")
             }
-            return (1013 * 1000) + buildCountValue
+            return (1014 * 1000) + buildCountValue
         }
 
     val VERSION_NAME: String
@@ -68,7 +68,7 @@ object Configuration {
             if (!initialized) {
                 println("Configuration:: WARNING: VERSION_NAME accessed before initializeBuildCount was called! Returning a default.")
             }
-            return "1.0.13-build_$buildCountValue"
+            return "1.0.14-build_$buildCountValue"
         }
 
     fun buildAppName(name: String, versionName: String): String {
