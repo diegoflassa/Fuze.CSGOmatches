@@ -1,15 +1,15 @@
 [versions]
 
 #Common build.gradle
-gradle = "8.12.2"
-kotlin = "2.2.10"
+gradle = "8.13.0"
+kotlin = "2.2.20"
 
 #Project build.gradle
 hilt-android-gradle-plugin = "2.57.1"
 
 #Common
 core-ktx = "1.17.0"
-material = "1.12.0"
+material = "1.13.0"
 
 #Unit tests
 junit = "4.13.2"
@@ -22,11 +22,11 @@ ax-paging-testing = "3.3.6"
 ax-test-ext-junit-ktx = "1.3.0"
 
 #Compose
-compose-bom = "2025.08.01"
+compose-bom = "2025.09.01"
 ax-constraintlayout-compose = "1.1.1"
-ax-activity-compose = "1.10.1"
-ax-navigation-compose = "2.9.3"
-lifecycle-viewmodel-compose = "2.9.3"
+ax-activity-compose = "1.11.0"
+ax-navigation-compose = "2.9.5"
+lifecycle-viewmodel-compose = "2.9.4"
 kotlinx-serialization-json = "1.9.0"
 
 #Paging
@@ -41,9 +41,9 @@ ax-navigation3-viewmodel = "1.0.0-alpha04"
 #Dagger & Hilt
 hilt-android = "2.57.1"
 hilt-android-compiler = "2.57.1"
-hilt-common = "1.2.0"
-hilt-compiler = "1.2.0"
-ax-hilt-navigation-compose = "1.2.0"
+hilt-common = "1.3.0"
+hilt-compiler = "1.3.0"
+ax-hilt-navigation-compose = "1.3.0"
 
 #OkHttp
 okhttp-bom = "5.1.0"
@@ -57,11 +57,11 @@ retrofit2 = "3.0.0"
 retrofit2-kotlinx-serialization-converter = "1.0.0"
 
 #Lifecycle
-ax-lifecycle-runtime-ktx = "2.9.3"
-ax-lifecycle-common = "2.9.3"
-ax-lifecycle-common-java8 = "2.9.3"
-ax-lifecycle-viewmodel-savedstate = "2.9.3"
-ax-lifecycle-viewmodel-ktx = "2.9.3"
+ax-lifecycle-runtime-ktx = "2.9.4"
+ax-lifecycle-common = "2.9.4"
+ax-lifecycle-common-java8 = "2.9.4"
+ax-lifecycle-viewmodel-savedstate = "2.9.4"
+ax-lifecycle-viewmodel-ktx = "2.9.4"
 
 #Lifecycle Extensions
 ax-lifecycle-extensions = "2.2.0"
@@ -75,7 +75,7 @@ io-coil-kt-coil-compose = "2.7.0"
 #Plugins
 
 #Common
-com-google-devtools-ksp = "2.2.10-2.0.2"
+com-google-devtools-ksp = "2.2.20-2.0.3"
 
 [libraries]
 
