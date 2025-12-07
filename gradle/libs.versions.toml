@@ -5,7 +5,7 @@ gradle = "8.13.0"
 kotlin = "2.2.20"
 
 #Project build.gradle
-hilt-android-gradle-plugin = "2.57.1"
+hilt-android-gradle-plugin = "2.57.2"
 
 #Common
 core-ktx = "1.17.0"
@@ -22,7 +22,7 @@ ax-paging-testing = "3.3.6"
 ax-test-ext-junit-ktx = "1.3.0"
 
 #Compose
-compose-bom = "2025.09.01"
+compose-bom = "2025.10.00"
 ax-constraintlayout-compose = "1.1.1"
 ax-activity-compose = "1.11.0"
 ax-navigation-compose = "2.9.5"
@@ -39,14 +39,14 @@ ax-navigation3-ui = "1.0.0-alpha08"
 ax-navigation3-viewmodel = "1.0.0-alpha04"
 
 #Dagger & Hilt
-hilt-android = "2.57.1"
-hilt-android-compiler = "2.57.1"
+hilt-android = "2.57.2"
+hilt-android-compiler = "2.57.2"
 hilt-common = "1.3.0"
 hilt-compiler = "1.3.0"
 ax-hilt-navigation-compose = "1.3.0"
 
 #OkHttp
-okhttp-bom = "5.1.0"
+okhttp-bom = "5.2.1"
 
 #Moshi
 moshi-kotlin = "1.15.2"
